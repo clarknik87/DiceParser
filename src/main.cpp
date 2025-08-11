@@ -1,6 +1,5 @@
 #include <string>
 #include <sstream>
-#include <memory>
 #include <vector>
 
 #include "parser.hpp"
@@ -12,13 +11,14 @@ private:
     calc::Scanner scanner;
     calc::Parser parser;
 
-    std::unique_ptr<std::istringstream> istream;
+    std::istringstream istream;
 public:
     DiceParser() : scanner(std::cin, std::cerr), parser(&scanner) {}
     int parse(const std::string& dice_str)
     {
-        istream = std::make_unique<std::istringstream>(dice_str);
-        scanner.switch_streams(*istream, std::cerr);
+        istream.clear();
+        istream.str(dice_str);
+        scanner.switch_streams(istream, std::cerr);
         return parser.parse();
     }
 };
