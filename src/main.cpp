@@ -12,13 +12,15 @@ private:
     calc::Parser parser;
 
     std::istringstream istream;
+    std::ostringstream errstream;
 public:
     DiceParser() : scanner(std::cin, std::cerr), parser(&scanner) {}
     int parse(const std::string& dice_str)
     {
+        errstream.clear();
         istream.clear();
         istream.str(dice_str);
-        scanner.switch_streams(istream, std::cerr);
+        scanner.switch_streams(istream, errstream);
         return parser.parse();
     }
 };
