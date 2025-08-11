@@ -2,7 +2,7 @@
  */
 
 %{
-#include "Parser2.hpp"
+#include "parser.hpp"
 #include "scanner.hpp"
 #define YY_DECL int calc::Scanner::lex(calc::Parser::semantic_type *yylval)
 // workaround for bug in flex 2.6.4
@@ -46,11 +46,4 @@ fltvar          ([[:lower:]])
 
 int yyFlexLexer::yylex() {
     throw std::runtime_error("Invalid call to yyFlexLexer::yylex()");
-}
-
-int main() {
-    calc::Scanner scanner{ std::cin, std::cerr };
-    calc::Parser parser{ &scanner };
-    std::cout.precision(10);
-    parser.parse();
 }

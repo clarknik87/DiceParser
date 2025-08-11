@@ -17,6 +17,7 @@ FLEX_TARGET(built_lexer
 add_executable(dice_lexer
     ${FLEX_built_lexer_OUTPUTS}
     ${BISON_parser_OUTPUTS}
+    main.cpp
 )
 
 target_include_directories(dice_lexer PRIVATE

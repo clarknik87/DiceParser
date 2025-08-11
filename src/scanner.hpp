@@ -1,4 +1,8 @@
-namespace calc { // note: depends upon FlexLexer.h and Parser2.hpp
+#ifndef yyFlexLexer
+#include <FlexLexer.h>
+#endif //yyFlexLexer
+
+namespace calc {
 
 class Scanner : public yyFlexLexer {
 public:
@@ -9,4 +13,4 @@ public:
     int lex(Parser::semantic_type *yylval); // note: this is the prototype we need
 };
 
-} // namespace calc
+}
