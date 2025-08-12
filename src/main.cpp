@@ -2,31 +2,7 @@
 #include <sstream>
 #include <vector>
 
-#include "parser.hpp"
-#include "scanner.hpp"
-#include "parser_result.hpp"
-
-class DiceParser
-{
-private:
-    calc::Scanner scanner;
-    calc::Parser parser;
-
-    std::istringstream istream;
-    std::ostringstream errstream;
-    parse_result_t result;
-public:
-    DiceParser() : scanner(std::cin, std::cerr), parser(&scanner, result) {}
-    parse_result_t parse(const std::string& dice_str)
-    {
-        errstream.clear();
-        istream.clear();
-        istream.str(dice_str);
-        scanner.switch_streams(istream, errstream);
-        parser.parse();
-        return result;
-    }
-};
+#include "dice_parser.hpp"
 
 struct test_case_t
 {

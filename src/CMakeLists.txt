@@ -19,6 +19,7 @@ add_executable(dice_lexer
     ${BISON_parser_OUTPUTS}
     dice_pdf.cpp
     dice_distribution.cpp
+    dice_parser.cpp
     main.cpp
 )
 
