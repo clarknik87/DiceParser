@@ -4,45 +4,31 @@
 %{
 #include "parser.hpp"
 #include "scanner.hpp"
+#include "dice_distribution.hpp"
 #define YY_DECL int calc::Scanner::lex(calc::Parser::semantic_type *yylval)
 // workaround for bug in flex 2.6.4
 #define yypanic(X) (void)(X)
 %}
 
-%option c++ interactive noyywrap noyylineno nodefault
+%option c++
+%option noyywrap
+%option noyylineno
+%option nodefault
 
-dseq            ([[:digit:]]+)
-dseq_opt        ({dseq}?)
-frac            (({dseq_opt}"."{dseq})|{dseq}".")
-exp             ([eE][+-]?{dseq})
-exp_opt         ({exp}?)
+int_t     [0-9]+
 
-integer         ({dseq})
-float           (({frac}{exp_opt})|({dseq}{exp}))
-intvar          ([[:upper:]])
-fltvar          ([[:lower:]])
+%%
+{int_t}           {yylval->emplace<double>(strtod(YYText(), nullptr)); return Parser::token::DOUBLE_T;}
+"+"               return Parser::token::PLUS;
+"-"               return Parser::token::MINUS;
+"*"               return Parser::token::MULTIPLY;
+"/"               return Parser::token::DIVIDE;
+[ \t\r\n]+        { /* skip whitespace */ }
+.                 { return Parser::token::YYerror; }
 
 %%
 
-{integer}       yylval->emplace<long long>(strtoll(YYText(), nullptr, 10)); return Parser::token::INT;
-{float}         yylval->emplace<double>(strtod(YYText(), nullptr)); return Parser::token::FLT;
-{intvar}        yylval->emplace<char>(YYText()[0]); return Parser::token::INTVAR;
-{fltvar}        yylval->emplace<char>(YYText()[0]); return Parser::token::FLTVAR;
-"+"             return Parser::token::PLUS;
-"-"             return Parser::token::MINUS;
-"*"             return Parser::token::MULTIPLY;
-"/"             return Parser::token::DIVIDE;
-"%"             return Parser::token::MODULO;
-"!"             return Parser::token::FACTORIAL;
-"^"             return Parser::token::EXPONENT;
-"("             return Parser::token::LPAREN;
-")"             return Parser::token::RPAREN;
-"="             return Parser::token::ASSIGN;
-\n              return Parser::token::EOL;
-<<EOF>>         return Parser::token::YYEOF;
-.               /* no action on unmatched input */
 
-%%
 
 int yyFlexLexer::yylex() {
     throw std::runtime_error("Invalid call to yyFlexLexer::yylex()");

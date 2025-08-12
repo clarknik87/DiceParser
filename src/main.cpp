@@ -4,6 +4,7 @@
 
 #include "parser.hpp"
 #include "scanner.hpp"
+#include "parser_result.hpp"
 
 class DiceParser
 {
@@ -13,15 +14,17 @@ private:
 
     std::istringstream istream;
     std::ostringstream errstream;
+    parse_result_t result;
 public:
-    DiceParser() : scanner(std::cin, std::cerr), parser(&scanner) {}
+    DiceParser() : scanner(std::cin, std::cerr), parser(&scanner, result) {}
     int parse(const std::string& dice_str)
     {
         errstream.clear();
         istream.clear();
         istream.str(dice_str);
         scanner.switch_streams(istream, errstream);
-        return parser.parse();
+        parser.parse();
+        return std::get<double>(result);
     }
 };
 
@@ -36,7 +39,7 @@ int main(int argc, char* argv[]) {
 
     for(auto test_case : test_cases)
     {
-        std::cout << test_case << " = " << parser.parse(test_case + "\n") << std::endl;
+        std::cout << test_case << " = " << parser.parse(test_case) << std::endl;
     }
     return 0;
 }

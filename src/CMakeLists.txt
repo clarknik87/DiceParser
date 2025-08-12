@@ -17,6 +17,8 @@ FLEX_TARGET(built_lexer
 add_executable(dice_lexer
     ${FLEX_built_lexer_OUTPUTS}
     ${BISON_parser_OUTPUTS}
+    dice_pdf.cpp
+    dice_distribution.cpp
     main.cpp
 )
 
