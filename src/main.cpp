@@ -17,29 +17,55 @@ private:
     parse_result_t result;
 public:
     DiceParser() : scanner(std::cin, std::cerr), parser(&scanner, result) {}
-    int parse(const std::string& dice_str)
+    parse_result_t parse(const std::string& dice_str)
     {
         errstream.clear();
         istream.clear();
         istream.str(dice_str);
         scanner.switch_streams(istream, errstream);
         parser.parse();
-        return std::get<double>(result);
+        return result;
     }
+};
+
+struct test_case_t
+{
+    std::string test_str;
+    double      ans;
 };
 
 int main(int argc, char* argv[]) {
 
-    std::vector<std::string> test_cases{
-        "1+1",
-        "7*3"
+    std::vector<test_case_t> test_cases{
+        {"3+10",13},
+        {"16/4",4},
+        {"12-20",-8},
+        {"4*2",8}
     };
 
     DiceParser parser;
 
+    int err_cnt = 0;
     for(auto test_case : test_cases)
     {
-        std::cout << test_case << " = " << parser.parse(test_case) << std::endl;
+        auto parse_ans = std::get<double>(parser.parse(test_case.test_str));
+        if(parse_ans == test_case.ans)
+        {
+            std::cout << "  [PASSED] " << test_case.test_str << " = " << parse_ans << std::endl;
+        }
+        else
+        {
+            std::cout << "  [FAILED] " << test_case.test_str << " = " << parse_ans << std::endl;
+            ++err_cnt;
+        }
+    }
+    if(err_cnt == 0)
+    {
+        std::cout << "[PASSED] " << test_cases.size() << "/" << test_cases.size() << " test cases" << std::endl;
+    }
+    else
+    {
+        std::cout << "[FAILED] " << err_cnt << "/" << test_cases.size() << " test cases" << std::endl;
     }
     return 0;
 }
