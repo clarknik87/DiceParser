@@ -25,6 +25,8 @@ double_t  [0-9]+\.[0-9]+
 "-"               return Parser::token::MINUS;
 "*"               return Parser::token::MULTIPLY;
 "/"               return Parser::token::DIVIDE;
+"("               return Parser::token::LPAREN;
+")"               return Parser::token::RPAREN;
 [ \t\r\n]+        { /* skip whitespace */ }
 .                 { return Parser::token::YYerror; }
 

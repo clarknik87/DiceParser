@@ -7,6 +7,7 @@
 
 %require "3.7.4"
 %language "C++"
+%skeleton "lalr1.cc"
 %defines "parser.hpp"
 
 %code requires
@@ -16,7 +17,9 @@
 
 %define api.parser.class {Parser}
 %define api.namespace {calc}
+// %define api.token.constructor
 %define api.value.type variant
+%define api.token.raw
 %parse-param {Scanner* scanner} {parse_result_t& result}
 
 %code requires
@@ -41,6 +44,8 @@
 %token MINUS
 %token MULTIPLY
 %token DIVIDE
+%token LPAREN
+%token RPAREN
 
 %left               PLUS MINUS
 %left               MULTIPLY DIVIDE
@@ -49,15 +54,18 @@
 %%
 
 input:
-  dexp                { result = parse_result_t{$1}; }
+  dexp                      { result = parse_result_t{$1}; }
   ;
 
 dexp:
-  DOUBLE_T            { $$ = $1;}
-| dexp PLUS     dexp  { $$ = $1 + $3; }
-| dexp MINUS    dexp  { $$ = $1 - $3; }
-| dexp MULTIPLY dexp  { $$ = $1 * $3; }
-| dexp DIVIDE   dexp  { $$ = $1 / $3; }
+  DOUBLE_T                  { $$ = $1;}
+| PLUS dexp %prec UMINUS    { $$ = +$2; }
+| MINUS dexp %prec UMINUS   { $$ = -$2; }
+| dexp PLUS     dexp        { $$ = $1 + $3; }
+| dexp MINUS    dexp        { $$ = $1 - $3; }
+| dexp MULTIPLY dexp        { $$ = $1 * $3; }
+| dexp DIVIDE   dexp        { $$ = $1 / $3; }
+| LPAREN dexp RPAREN        { $$ = $2; }
 
 %%
 

@@ -10,9 +10,12 @@ struct test_case_t
     double      ans;
 };
 
-int main(int argc, char* argv[]) {
-
+int main(int argc, char* argv[])
+{
     std::vector<test_case_t> test_cases{
+        // Unary Arithmetic
+        {"+5",5},
+        {"-6",-6},
         // Integer Arithmetic
         {"3+10",13},
         {"16/4",4},
@@ -22,7 +25,10 @@ int main(int argc, char* argv[]) {
         {"1.5+2.2",3.7},
         {"5/2",2.5},
         {"100.0 - 50.5",49.5},
-        {"4*2.2",8.8}
+        {"4*2.2",8.8},
+        // Parenthesis
+        {"(3+5)*2", 16},
+        {"((3+5)*(1+1))/2", 8},
     };
 
     DiceParser parser;
