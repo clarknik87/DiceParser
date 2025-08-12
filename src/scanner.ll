@@ -16,9 +16,11 @@
 %option nodefault
 
 int_t     [0-9]+
+double_t  [0-9]+\.[0-9]+
 
 %%
 {int_t}           {yylval->emplace<double>(strtod(YYText(), nullptr)); return Parser::token::DOUBLE_T;}
+{double_t}        {yylval->emplace<double>(strtod(YYText(), nullptr)); return Parser::token::DOUBLE_T;}
 "+"               return Parser::token::PLUS;
 "-"               return Parser::token::MINUS;
 "*"               return Parser::token::MULTIPLY;

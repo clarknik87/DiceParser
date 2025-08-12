@@ -13,10 +13,16 @@ struct test_case_t
 int main(int argc, char* argv[]) {
 
     std::vector<test_case_t> test_cases{
+        // Integer Arithmetic
         {"3+10",13},
         {"16/4",4},
         {"12-20",-8},
-        {"4*2",8}
+        {"4*2",8},
+        // Floating Point Arithmetic
+        {"1.5+2.2",3.7},
+        {"5/2",2.5},
+        {"100.0 - 50.5",49.5},
+        {"4*2.2",8.8}
     };
 
     DiceParser parser;
