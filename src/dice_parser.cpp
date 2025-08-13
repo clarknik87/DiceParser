@@ -1,4 +1,4 @@
-#include "dice_parser.hpp"
+#include "dice_parser/dice_parser.hpp"
 
 DiceParser::DiceParser() : scanner(std::cin, std::cerr), parser(&scanner, result) {}
 

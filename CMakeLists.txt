@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(dice_lexer)
+project(dice_parser)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,10 +16,10 @@ FetchContent_MakeAvailable(eigen)
 
 add_subdirectory(src)
 
-target_link_libraries(dice_lexer PRIVATE
+target_link_libraries(dice_parser PRIVATE
     Eigen3::Eigen
 )
 
-set_target_properties(dice_lexer PROPERTIES
+set_target_properties(dice_parser PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )

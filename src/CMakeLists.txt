@@ -14,7 +14,7 @@ FLEX_TARGET(built_lexer
     ${CMAKE_CURRENT_BINARY_DIR}/scanner.cc
 )
 
-add_executable(dice_lexer
+add_executable(dice_parser
     ${FLEX_built_lexer_OUTPUTS}
     ${BISON_parser_OUTPUTS}
     dice_pdf.cpp
@@ -23,7 +23,8 @@ add_executable(dice_lexer
     main.cpp
 )
 
-target_include_directories(dice_lexer PRIVATE
+target_include_directories(dice_parser PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_CURRENT_BINARY_DIR}
 )

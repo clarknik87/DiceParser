@@ -3,7 +3,7 @@
 
 #include "parser.hpp"
 #include "scanner.hpp"
-#include "parser_result.hpp"
+#include "dice_parser/parser_result.hpp"
 
 class DiceParser
 {

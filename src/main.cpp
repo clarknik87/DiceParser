@@ -2,7 +2,7 @@
 #include <sstream>
 #include <vector>
 
-#include "dice_parser.hpp"
+#include "dice_parser/dice_parser.hpp"
 
 struct test_case_t
 {

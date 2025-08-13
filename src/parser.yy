@@ -12,7 +12,7 @@
 
 %code requires
 {
-    #include "parser_result.hpp"
+    #include "dice_parser/parser_result.hpp"
 }
 
 %define api.parser.class {Parser}
