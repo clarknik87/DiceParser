@@ -17,7 +17,7 @@
 
 %define api.parser.class {Parser}
 %define api.namespace {calc}
-// %define api.token.constructor
+%define api.token.constructor
 %define api.value.type variant
 %define api.token.raw
 %parse-param {Scanner* scanner} {parse_result_t& result}

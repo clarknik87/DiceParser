@@ -5,7 +5,7 @@
 #include "parser.hpp"
 #include "scanner.hpp"
 #include "dice_distribution.hpp"
-#define YY_DECL int calc::Scanner::lex(calc::Parser::semantic_type *yylval)
+#define YY_DECL calc::Parser::symbol_type calc::Scanner::lex()
 // workaround for bug in flex 2.6.4
 #define yypanic(X) (void)(X)
 %}
@@ -19,20 +19,18 @@ int_t     [0-9]+
 double_t  [0-9]+\.[0-9]+
 
 %%
-{int_t}           {yylval->emplace<double>(strtod(YYText(), nullptr)); return Parser::token::DOUBLE_T;}
-{double_t}        {yylval->emplace<double>(strtod(YYText(), nullptr)); return Parser::token::DOUBLE_T;}
-"+"               return Parser::token::PLUS;
-"-"               return Parser::token::MINUS;
-"*"               return Parser::token::MULTIPLY;
-"/"               return Parser::token::DIVIDE;
-"("               return Parser::token::LPAREN;
-")"               return Parser::token::RPAREN;
+{int_t}           return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
+{double_t}        return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
+"+"               return calc::Parser::make_PLUS();
+"-"               return calc::Parser::make_MINUS();
+"*"               return calc::Parser::make_MULTIPLY();
+"/"               return calc::Parser::make_DIVIDE();
+"("               return calc::Parser::make_LPAREN();
+")"               return calc::Parser::make_RPAREN();
 [ \t\r\n]+        { /* skip whitespace */ }
-.                 { return Parser::token::YYerror; }
+.                 return calc::Parser::make_YYerror();
 
 %%
-
-
 
 int yyFlexLexer::yylex() {
     throw std::runtime_error("Invalid call to yyFlexLexer::yylex()");
