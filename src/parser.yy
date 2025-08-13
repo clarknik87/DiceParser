@@ -76,5 +76,5 @@ dexpr:
 %%
 
 void calc::Parser::error(const std::string& msg) {
-    std::cerr << msg << '\n';
+    throw err_code::invalid_syntax;
 }

@@ -8,6 +8,13 @@ parse_result_t DiceParser::parse(const std::string& dice_str)
     istream.clear();
     istream.str(dice_str);
     scanner.switch_streams(istream, errstream);
-    parser.parse();
+    try
+    {
+        parser.parse();
+    }
+    catch(err_code e)
+    {
+        result = parse_result_t{e};
+    }
     return result;
 }

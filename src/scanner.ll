@@ -4,6 +4,7 @@
 %{
 #include "parser.hpp"
 #include "scanner.hpp"
+#include "parser_result.hpp"
 #include "dice_distribution.hpp"
 #define YY_DECL calc::Parser::symbol_type calc::Scanner::lex()
 // workaround for bug in flex 2.6.4
@@ -30,7 +31,7 @@ dice_t    [0-9]+d[0-9]+
 "("               return calc::Parser::make_LPAREN();
 ")"               return calc::Parser::make_RPAREN();
 [ \t\r\n]+        { /* skip whitespace */ }
-.                 return calc::Parser::make_YYerror();
+.                 throw err_code::unknown_symbol;
 
 %%
 
