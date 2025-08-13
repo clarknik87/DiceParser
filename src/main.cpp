@@ -29,6 +29,8 @@ int main(int argc, char* argv[])
         // Parenthesis
         {"(3+5)*2", 16},
         {"((3+5)*(1+1))/2", 8},
+        // Basic Dice Rolls
+        {"1d1", 1},
     };
 
     DiceParser parser;

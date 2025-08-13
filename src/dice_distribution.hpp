@@ -11,7 +11,7 @@ private:
     DicePDF m_pdf;
 public:
     // Constructors
-    DiceDistr() = delete;
+    DiceDistr() = default;
     DiceDistr(std::string expr);
     DiceDistr(std::string expr, DicePDF pdf);
 

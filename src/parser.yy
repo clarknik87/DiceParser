@@ -36,36 +36,42 @@
     #define yylex(x) scanner->lex(x)
 }
 
-%token <double>  DOUBLE_T
+%token <double>             DOUBLE_T
+%token <DiceDistr>          DICE_T
 
-%nterm <double>  dexp
+%nterm <double>             expr
+%nterm <DiceDistr>          dexpr
 
-%token PLUS
-%token MINUS
-%token MULTIPLY
-%token DIVIDE
-%token LPAREN
-%token RPAREN
+%token                      PLUS
+%token                      MINUS
+%token                      MULTIPLY
+%token                      DIVIDE
+%token                      LPAREN
+%token                      RPAREN
 
-%left               PLUS MINUS
-%left               MULTIPLY DIVIDE
-%precedence         UMINUS
+%left                       PLUS MINUS
+%left                       MULTIPLY DIVIDE
+%precedence                 UMINUS
 
 %%
 
 input:
-  dexp                      { result = parse_result_t{$1}; }
+  expr                      { result = parse_result_t{$1}; }
+  | dexpr                   { result = parse_result_t{$1.roll()}; }
   ;
 
-dexp:
-  DOUBLE_T                  { $$ = $1;}
-| PLUS dexp %prec UMINUS    { $$ = +$2; }
-| MINUS dexp %prec UMINUS   { $$ = -$2; }
-| dexp PLUS     dexp        { $$ = $1 + $3; }
-| dexp MINUS    dexp        { $$ = $1 - $3; }
-| dexp MULTIPLY dexp        { $$ = $1 * $3; }
-| dexp DIVIDE   dexp        { $$ = $1 / $3; }
-| LPAREN dexp RPAREN        { $$ = $2; }
+expr:
+  DOUBLE_T                  { $$ = $1; }
+| PLUS expr %prec UMINUS    { $$ = +$2; }
+| MINUS expr %prec UMINUS   { $$ = -$2; }
+| expr PLUS     expr        { $$ = $1 + $3; }
+| expr MINUS    expr        { $$ = $1 - $3; }
+| expr MULTIPLY expr        { $$ = $1 * $3; }
+| expr DIVIDE   expr        { $$ = $1 / $3; }
+| LPAREN expr RPAREN        { $$ = $2; }
+
+dexpr:
+  DICE_T                    { $$ = $1; }
 
 %%
 

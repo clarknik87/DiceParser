@@ -17,8 +17,10 @@
 
 int_t     [0-9]+
 double_t  [0-9]+\.[0-9]+
+dice_t    [0-9]+d[0-9]+
 
 %%
+{dice_t}          return calc::Parser::make_DICE_T(DiceDistr(YYText()));
 {int_t}           return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
 {double_t}        return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
 "+"               return calc::Parser::make_PLUS();
