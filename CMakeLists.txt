@@ -15,8 +15,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(eigen)
 
 add_subdirectory(src)
+add_subdirectory(test)
 
-target_link_libraries(dice_parser PRIVATE
+target_link_libraries(dice_parser PUBLIC
     Eigen3::Eigen
 )
 
