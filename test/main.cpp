@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <gtest/gtest.h>
 
 #include "dice_parser/dice_parser.hpp"
 
@@ -16,7 +17,7 @@ struct err_case_t
     err_code    ans;
 };
 
-int main(int argc, char* argv[])
+TEST(valid, arithmetic)
 {
     std::vector<test_case_t> test_cases{
         // Unary Arithmetic
@@ -34,11 +35,34 @@ int main(int argc, char* argv[])
         {"4*2.2",8.8},
         // Parenthesis
         {"(3+5)*2", 16},
-        {"((3+5)*(1+1))/2", 8},
-        // Basic Dice Rolls
+        {"((3+5)*(1+1))/2", 8}
+    };
+
+    DiceParser parser;
+    for(auto test_case : test_cases)
+    {
+        auto parse_ans = std::get<double>(parser.parse(test_case.test_str));
+        EXPECT_EQ(parse_ans, test_case.ans) << test_case.test_str;
+    }
+}
+
+TEST(valid, dice_rolls)
+{
+    std::vector<test_case_t> test_cases{
+        // Basic Die Rolls
         {"1d1", 1},
     };
 
+    DiceParser parser;
+    for(auto test_case : test_cases)
+    {
+        auto parse_ans = std::get<double>(parser.parse(test_case.test_str));
+        EXPECT_EQ(parse_ans, test_case.ans) << test_case.test_str;
+    }
+}
+
+TEST(invalid, error_codes)
+{
     std::vector<err_case_t> error_cases{
         // Invaliid tokens
         {"~2d6", err_code::unknown_symbol},
@@ -46,41 +70,18 @@ int main(int argc, char* argv[])
     };
 
     DiceParser parser;
+    for(auto error_case : error_cases)
+    {
+        auto parse_ans = std::get<err_code>(parser.parse(error_case.test_str));
+        EXPECT_EQ(parse_ans, error_case.ans) << error_case.test_str;
+    }
+}
 
-    int err_cnt = 0;
-    for(auto test_case : test_cases)
-    {
-        auto parse_ans = std::get<double>(parser.parse(test_case.test_str));
-        if(parse_ans == test_case.ans)
-        {
-            std::cout << "  [PASSED] " << test_case.test_str << " = " << parse_ans << std::endl;
-        }
-        else
-        {
-            std::cout << "  [FAILED] " << test_case.test_str << " = " << parse_ans << std::endl;
-            ++err_cnt;
-        }
-    }
-    for(auto test_case : error_cases)
-    {
-        auto parse_ans = std::get<err_code>(parser.parse(test_case.test_str));
-        if(parse_ans == test_case.ans)
-        {
-            std::cout << "  [PASSED] " << test_case.test_str << std::endl;
-        }
-        else
-        {
-            std::cout << "  [FAILED] " << test_case.test_str << std::endl;
-            ++err_cnt;
-        }
-    }
-    if(err_cnt == 0)
-    {
-        std::cout << "[PASSED] " << test_cases.size() << "/" << test_cases.size() << " test cases" << std::endl;
-    }
-    else
-    {
-        std::cout << "[FAILED] " << err_cnt << "/" << test_cases.size() << " test cases" << std::endl;
-    }
+int main(int argc, char** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    if (RUN_ALL_TESTS())
+        ;
+
     return 0;
 }
