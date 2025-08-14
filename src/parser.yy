@@ -48,6 +48,12 @@
 %token                        DIVIDE
 %token                        LPAREN
 %token                        RPAREN
+%token                        EQUAL_TO
+%token                        NOT_EQUAL_TO
+%token                        GREATER_EQUA
+%token                        LESS_EQUAL
+%token                        GREATER_THAN
+%token                        LESS_THAN
 %token                        STATS
 
 %left                         PLUS MINUS
@@ -60,6 +66,18 @@ input:
   expr                        { result = parse_result_t{$1}; }
   | dexpr                     { result = parse_result_t{$1.roll()}; }
   | STATS LPAREN dexpr RPAREN { result = parse_result_t{$3}; }
+  | dexpr EQUAL_TO expr       { result = parse_result_t{$1 == $3}; }
+  | dexpr NOT_EQUAL_TO expr   { result = parse_result_t{$1 != $3}; }
+  | dexpr GREATER_EQUA expr   { result = parse_result_t{$1 >= $3}; }
+  | dexpr LESS_EQUAL expr     { result = parse_result_t{$1 <= $3}; }
+  | dexpr GREATER_THAN expr   { result = parse_result_t{$1 > $3}; }
+  | dexpr LESS_THAN expr      { result = parse_result_t{$1 < $3}; }
+  | expr EQUAL_TO dexpr       { result = parse_result_t{$1 == $3}; }
+  | expr NOT_EQUAL_TO dexpr   { result = parse_result_t{$1 != $3}; }
+  | expr GREATER_EQUA dexpr   { result = parse_result_t{$1 >= $3}; }
+  | expr LESS_EQUAL dexpr     { result = parse_result_t{$1 <= $3}; }
+  | expr GREATER_THAN dexpr   { result = parse_result_t{$1 > $3}; }
+  | expr LESS_THAN dexpr      { result = parse_result_t{$1 < $3}; }
   ;
 
 expr:

@@ -67,6 +67,32 @@ TEST(valid, dice_rolls)
     }
 }
 
+TEST(valid, dice_comparisons)
+{
+    std::vector<test_case_t> test_cases{
+        // Basic Dice Formulas
+        {"1d4 == 1", 0.25},
+        {"1d4 != 1", 0.75},
+        {"1d4 >= 1", 1.00},
+        {"1d4 <= 1", 0.25},
+        {"1d4 > 1", 0.75},
+        {"1d4 < 1", 0.00},
+        {"1 == 1d4", 0.25},
+        {"1 != 1d4", 0.75},
+        {"1 >= 1d4", 0.25},
+        {"1 <= 1d4", 1.00},
+        {"1 > 1d4", 0.00},
+        {"1 < 1d4", 0.75},
+    };
+
+    DiceParser parser;
+    for(auto test_case : test_cases)
+    {
+        auto parse_ans = std::get<double>(parser.parse(test_case.test_str));
+        EXPECT_EQ(parse_ans, test_case.ans) << test_case.test_str;
+    }
+}
+
 TEST(valid, dice_stats)
 {
     std::vector<test_case_t> test_cases{
