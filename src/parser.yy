@@ -92,6 +92,17 @@ expr:
 
 dexpr:
   DICE_T                      { $$ = $1; }
+| PLUS dexpr %prec UMINUS     { $$ = +$2; }
+| MINUS dexpr %prec UMINUS    { $$ = -$2; }
+| dexpr PLUS     dexpr        { $$ = $1 + $3; }
+| dexpr MINUS    dexpr        { $$ = $1 - $3; }
+| dexpr PLUS     expr         { $$ = $1 + $3; }
+| dexpr MINUS    expr         { $$ = $1 - $3; }
+| dexpr MULTIPLY expr         { $$ = $1 * $3; }
+| expr PLUS     dexpr         { $$ = $1 + $3; }
+| expr MINUS    dexpr         { $$ = $1 - $3; }
+| expr MULTIPLY dexpr         { $$ = $1 * $3; }
+| LPAREN dexpr RPAREN         { $$ = $2; }
 
 %%
 

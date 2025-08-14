@@ -46,7 +46,7 @@ TEST(valid, arithmetic)
     }
 }
 
-TEST(valid, dice_rolls)
+TEST(valid, dice_stats)
 {
     std::vector<test_case_t> test_cases{
         // Basic Dice Formulas
@@ -93,7 +93,7 @@ TEST(valid, dice_comparisons)
     }
 }
 
-TEST(valid, dice_stats)
+TEST(valid, dice_rolls)
 {
     std::vector<test_case_t> test_cases{
         // Basic Die Rolls
@@ -102,6 +102,18 @@ TEST(valid, dice_stats)
         {"min(3d1)", 1},
         {"max(2,3d1)", 2},
         {"min(3,4d1)", 3},
+        // Basic Dice Arithmetic
+        {"+2d1", 2},
+        {"-2d1", -2},
+        {"2d1 - 1d1", 1},
+        {"2d1 + 1d1", 3},
+        {"(2d1 - 1d1) + 1d1", 2},
+        {"4d1 - 1", 3},
+        {"4d1 + 1", 5},
+        {"4d1*2", 8},
+        {"6d1 - 1", 5},
+        {"6d1 + 1", 7},
+        {"6d1*2", 12},
     };
 
     DiceParser parser;
