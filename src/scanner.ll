@@ -25,6 +25,7 @@ dice_max_s  "max("([0-9]+)"d"([0-9]+)")"
 dice_min_s  "min("([0-9]+)"d"([0-9]+)")"
 dice_max_c  "max("([0-9]+)","([0-9]+)"d"([0-9]+)")"
 dice_min_c  "min("([0-9]+)","([0-9]+)"d"([0-9]+)")"
+stats       "stats"
 
 %%
 {dice_t}          return calc::Parser::make_DICE_T(DiceDistr(YYText()));
@@ -42,6 +43,7 @@ dice_min_c  "min("([0-9]+)","([0-9]+)"d"([0-9]+)")"
 "/"               return calc::Parser::make_DIVIDE();
 "("               return calc::Parser::make_LPAREN();
 ")"               return calc::Parser::make_RPAREN();
+{stats}           return calc::Parser::make_STATS();
 [ \t\r\n]+        { /* skip whitespace */ }
 .                 throw err_code::unknown_symbol;
 

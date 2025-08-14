@@ -36,42 +36,44 @@
     #define yylex(x) scanner->lex(x)
 }
 
-%token <double>             DOUBLE_T
-%token <DiceDistr>          DICE_T
+%token <double>               DOUBLE_T
+%token <DiceDistr>            DICE_T
 
-%nterm <double>             expr
-%nterm <DiceDistr>          dexpr
+%nterm <double>               expr
+%nterm <DiceDistr>            dexpr
 
-%token                      PLUS
-%token                      MINUS
-%token                      MULTIPLY
-%token                      DIVIDE
-%token                      LPAREN
-%token                      RPAREN
+%token                        PLUS
+%token                        MINUS
+%token                        MULTIPLY
+%token                        DIVIDE
+%token                        LPAREN
+%token                        RPAREN
+%token                        STATS
 
-%left                       PLUS MINUS
-%left                       MULTIPLY DIVIDE
-%precedence                 UMINUS
+%left                         PLUS MINUS
+%left                         MULTIPLY DIVIDE
+%precedence                   UMINUS
 
 %%
 
 input:
-  expr                      { result = parse_result_t{$1}; }
-  | dexpr                   { result = parse_result_t{$1.roll()}; }
+  expr                        { result = parse_result_t{$1}; }
+  | dexpr                     { result = parse_result_t{$1.roll()}; }
+  | STATS LPAREN dexpr RPAREN { result = parse_result_t{$3}; }
   ;
 
 expr:
-  DOUBLE_T                  { $$ = $1; }
-| PLUS expr %prec UMINUS    { $$ = +$2; }
-| MINUS expr %prec UMINUS   { $$ = -$2; }
-| expr PLUS     expr        { $$ = $1 + $3; }
-| expr MINUS    expr        { $$ = $1 - $3; }
-| expr MULTIPLY expr        { $$ = $1 * $3; }
-| expr DIVIDE   expr        { $$ = $1 / $3; }
-| LPAREN expr RPAREN        { $$ = $2; }
+  DOUBLE_T                    { $$ = $1; }
+| PLUS expr %prec UMINUS      { $$ = +$2; }
+| MINUS expr %prec UMINUS     { $$ = -$2; }
+| expr PLUS     expr          { $$ = $1 + $3; }
+| expr MINUS    expr          { $$ = $1 - $3; }
+| expr MULTIPLY expr          { $$ = $1 * $3; }
+| expr DIVIDE   expr          { $$ = $1 / $3; }
+| LPAREN expr RPAREN          { $$ = $2; }
 
 dexpr:
-  DICE_T                    { $$ = $1; }
+  DICE_T                      { $$ = $1; }
 
 %%
 

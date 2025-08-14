@@ -49,6 +49,27 @@ TEST(valid, arithmetic)
 TEST(valid, dice_rolls)
 {
     std::vector<test_case_t> test_cases{
+        // Basic Dice Formulas
+        {"stats(3d6)", 3},
+        {"stats(adv)", 1},
+        {"stats(dis)", 1},
+        {"stats(max(3d4))", 1},
+        {"stats(min(3d8))", 1},
+        {"stats(max(2,3d10))", 2},
+        {"stats(min(2,4d12))", 2},
+    };
+
+    DiceParser parser;
+    for(auto test_case : test_cases)
+    {
+        auto parse_ans = std::get<DiceDistr>(parser.parse(test_case.test_str)).minimum();
+        EXPECT_EQ(parse_ans, test_case.ans) << test_case.test_str;
+    }
+}
+
+TEST(valid, dice_stats)
+{
+    std::vector<test_case_t> test_cases{
         // Basic Die Rolls
         {"1d1", 1},
         {"max(2d1)", 1},
