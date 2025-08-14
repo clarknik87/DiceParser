@@ -16,12 +16,24 @@
 %option noyylineno
 %option nodefault
 
-int_t     [0-9]+
-double_t  [0-9]+\.[0-9]+
-dice_t    [0-9]+d[0-9]+
+int_t       [0-9]+
+double_t    [0-9]+\.[0-9]+
+dice_t      [0-9]+d[0-9]+
+adv         "adv"
+dis         "dis"
+dice_max_s  "max("([0-9]+)"d"([0-9]+)")"
+dice_min_s  "min("([0-9]+)"d"([0-9]+)")"
+dice_max_c  "max("([0-9]+)","([0-9]+)"d"([0-9]+)")"
+dice_min_c  "min("([0-9]+)","([0-9]+)"d"([0-9]+)")"
 
 %%
 {dice_t}          return calc::Parser::make_DICE_T(DiceDistr(YYText()));
+{adv}             return calc::Parser::make_DICE_T(DiceDistr(YYText()));
+{dis}             return calc::Parser::make_DICE_T(DiceDistr(YYText()));
+{dice_max_s}      return calc::Parser::make_DICE_T(DiceDistr(YYText()));
+{dice_min_s}      return calc::Parser::make_DICE_T(DiceDistr(YYText()));
+{dice_max_c}      return calc::Parser::make_DICE_T(DiceDistr(YYText()));
+{dice_min_c}      return calc::Parser::make_DICE_T(DiceDistr(YYText()));
 {int_t}           return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
 {double_t}        return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
 "+"               return calc::Parser::make_PLUS();

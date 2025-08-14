@@ -51,6 +51,10 @@ TEST(valid, dice_rolls)
     std::vector<test_case_t> test_cases{
         // Basic Die Rolls
         {"1d1", 1},
+        {"max(2d1)", 1},
+        {"min(3d1)", 1},
+        {"max(2,3d1)", 2},
+        {"min(3,4d1)", 3},
     };
 
     DiceParser parser;
