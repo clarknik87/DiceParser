@@ -48,17 +48,17 @@ public:
     friend DiceDistr operator*(double scalar, const DiceDistr& pdf);
 
     // Stats functions
-    double minimum();
-    double maximum();
-    double expected_value();
-    double variance();
-    double standard_dev();
+    double minimum() const;
+    double maximum() const;
+    double expected_value() const;
+    double variance() const;
+    double standard_dev() const;
 
     // Member Access
-    Eigen::RowVectorXd get_probs();
-    Eigen::RowVectorXd get_rolls();
-    Eigen::Matrix2Xd   get_pdfmatrix();
-    std::string        get_expr();
+    Eigen::RowVectorXd get_probs() const;
+    Eigen::RowVectorXd get_rolls() const;
+    Eigen::Matrix2Xd   get_pdfmatrix() const;
+    std::string        get_expr() const;
 
     // Random selection
     double roll();

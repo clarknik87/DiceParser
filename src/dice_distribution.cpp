@@ -110,17 +110,17 @@ DiceDistr operator-(double scalar, const DiceDistr& rhs) { return DiceDistr(std:
 DiceDistr operator*(double scalar, const DiceDistr& rhs) { return DiceDistr(std::to_string(scalar) + "*(" + rhs.m_expr + ")", scalar * rhs.m_pdf); }
 
 // Stats functions
-double DiceDistr::minimum() { return m_pdf.minimum(); }
-double DiceDistr::maximum() { return m_pdf.maximum(); }
-double DiceDistr::expected_value() { return m_pdf.expected_value(); }
-double DiceDistr::variance() { return m_pdf.variance(); }
-double DiceDistr::standard_dev() { return m_pdf.standard_dev(); }
+double DiceDistr::minimum() const { return m_pdf.minimum(); }
+double DiceDistr::maximum() const { return m_pdf.maximum(); }
+double DiceDistr::expected_value() const { return m_pdf.expected_value(); }
+double DiceDistr::variance() const { return m_pdf.variance(); }
+double DiceDistr::standard_dev() const { return m_pdf.standard_dev(); }
 
 // Member Access
-Eigen::RowVectorXd DiceDistr::get_probs() { return m_pdf.get_probs(); }
-Eigen::RowVectorXd DiceDistr::get_rolls() { return m_pdf.get_rolls(); }
-Eigen::Matrix2Xd   DiceDistr::get_pdfmatrix() { return m_pdf.get_pdfmatrix(); }
-std::string        DiceDistr::get_expr() { return m_expr; }
+Eigen::RowVectorXd DiceDistr::get_probs() const { return m_pdf.get_probs(); }
+Eigen::RowVectorXd DiceDistr::get_rolls() const { return m_pdf.get_rolls(); }
+Eigen::Matrix2Xd   DiceDistr::get_pdfmatrix() const { return m_pdf.get_pdfmatrix(); }
+std::string        DiceDistr::get_expr() const { return m_expr; }
 
 // Random selection
 double DiceDistr::roll() { return m_pdf.roll(); }
