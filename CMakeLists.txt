@@ -16,6 +16,7 @@ FetchContent_MakeAvailable(eigen)
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(repl)
 
 target_link_libraries(dice_parser PUBLIC
     Eigen3::Eigen
