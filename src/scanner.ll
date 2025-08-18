@@ -57,10 +57,14 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
 [ \t\r\n]+        { /* skip whitespace */ }
 {variable}        {
                     std::string token{YYText()};
+                    if(var_map.check_num_constant(token))
+                        return calc::Parser::make_NUM_CONSTANT(token);
                     if(var_map.check_num_variable(token))
                         return calc::Parser::make_NUM_VARIABLE(token);
                     if(var_map.check_dice_variable(token))
                         return calc::Parser::make_DICE_VARIABLE(token);
+                    if(var_map.check_dice_constant(token))
+                        return calc::Parser::make_DICE_CONSTANT(token);
                     return calc::Parser::make_NEW_VARIABLE(token);
                   }
 .                 throw action_code::unknown_symbol;

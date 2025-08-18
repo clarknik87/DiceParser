@@ -39,7 +39,9 @@
 
 %token <double>               DOUBLE_T
 %token <DiceDistr>            DICE_T
+%token <std::string>          DICE_CONSTANT
 %token <std::string>          DICE_VARIABLE
+%token <std::string>          NUM_CONSTANT
 %token <std::string>          NUM_VARIABLE
 %token <std::string>          NEW_VARIABLE
 
@@ -77,6 +79,10 @@ input:
   | NEW_VARIABLE ASSIGN dexpr { var_map.add_dice_variable($1, $3); result = parse_result_t{action_code::action_success}; }
   | NUM_VARIABLE ASSIGN dexpr { var_map.add_dice_variable($1, $3); result = parse_result_t{action_code::action_success}; }
   | DICE_VARIABLE ASSIGN dexpr{ var_map.add_dice_variable($1, $3); result = parse_result_t{action_code::action_success}; }
+  | NUM_CONSTANT ASSIGN expr  { result = parse_result_t{action_code::const_assignment_err}; }
+  | NUM_CONSTANT ASSIGN dexpr { result = parse_result_t{action_code::const_assignment_err}; }
+  | DICE_CONSTANT ASSIGN expr { result = parse_result_t{action_code::const_assignment_err}; }
+  | DICE_CONSTANT ASSIGN dexpr{ result = parse_result_t{action_code::const_assignment_err}; }
   | dexpr EQUAL_TO expr       { result = parse_result_t{$1 == $3}; }
   | dexpr NOT_EQUAL_TO expr   { result = parse_result_t{$1 != $3}; }
   | dexpr GREATER_EQUA expr   { result = parse_result_t{$1 >= $3}; }
@@ -94,6 +100,7 @@ input:
 expr:
   DOUBLE_T                    { $$ = $1; }
 | NUM_VARIABLE                { $$ = var_map.get_num_variable($1); }
+| NUM_CONSTANT                { $$ = var_map.get_num_constant($1); }
 | PLUS expr %prec UMINUS      { $$ = +$2; }
 | MINUS expr %prec UMINUS     { $$ = -$2; }
 | expr PLUS     expr          { $$ = $1 + $3; }
@@ -105,6 +112,7 @@ expr:
 dexpr:
   DICE_T                      { $$ = $1; }
 | DICE_VARIABLE               { $$ = var_map.get_dice_variable($1); }
+| DICE_CONSTANT               { $$ = var_map.get_dice_constant($1); }
 | PLUS dexpr %prec UMINUS     { $$ = +$2; }
 | MINUS dexpr %prec UMINUS    { $$ = -$2; }
 | dexpr PLUS     dexpr        { $$ = $1 + $3; }

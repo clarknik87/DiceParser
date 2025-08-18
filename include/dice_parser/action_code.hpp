@@ -8,7 +8,9 @@ enum class action_code
     action_success,
     unknown_symbol,
     invalid_syntax,
-    variable_error,
+    variable_undefined,
+    constant_undefined,
+    const_assignment_err,
 };
 
 inline std::ostream& operator<<(std::ostream& os, action_code& code)
@@ -24,8 +26,14 @@ inline std::ostream& operator<<(std::ostream& os, action_code& code)
     case action_code::invalid_syntax:
         os << "action_code::invalid_syntax";
         break;
-    case action_code::variable_error:
-        os << "action_code::variable_error";
+    case action_code::variable_undefined:
+        os << "action_code::variable_undefined";
+        break;
+    case action_code::constant_undefined:
+        os << "action_code::constant_undefined";
+        break;
+    case action_code::const_assignment_err:
+        os << "action_code::const_assignment_err";
         break;
     }
     return os;
