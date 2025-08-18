@@ -5,6 +5,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+add_executable(repl
+    repl.cpp
+)
+
+target_link_libraries(repl PRIVATE
+    dice_parser
+)
+
 add_executable(unit_tests 
     main.cpp
 )
