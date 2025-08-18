@@ -1,6 +1,6 @@
 #include "dice_parser/dice_parser.hpp"
 
-DiceParser::DiceParser() : scanner(std::cin, std::cerr), parser(&scanner, result) {}
+DiceParser::DiceParser() : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map) {}
 
 parse_result_t DiceParser::parse(const std::string& dice_str)
 {
@@ -12,7 +12,7 @@ parse_result_t DiceParser::parse(const std::string& dice_str)
     {
         parser.parse();
     }
-    catch(err_code e)
+    catch(action_code e)
     {
         result = parse_result_t{e};
     }

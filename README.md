@@ -27,9 +27,9 @@ std::cout << std::get<double>(parser.parse("1d6 - 1")) << std::endl;
 ## Return Type
 DiceParser::parse has the following return type:
 ```
-using parse_result_t = std::variant<double, DiceDistr, err_code>;
+using parse_result_t = std::variant<double, DiceDistr, action_code>;
 ```
-`err_code` is an enum defined in `parser_result.hpp`. This is returned if there is any error in the parsing process, ie unknown symbols, or invalid formual syntax.
+`action_code` is an enum defined in `parser_result.hpp`. This is returned if there is any error in the parsing process, ie unknown symbols, or invalid formual syntax, or if a successful action has no meaningful output, ie variable assignment.
 
 `double` is returned in most cases. Any dice formulas in the string are "rolled" and the remaining math is performed as expected.
 

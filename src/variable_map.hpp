@@ -1,0 +1,25 @@
+#ifndef VARIABLE_MAP_HPP_GUARD
+#define VARIABLE_MAP_HPP_GUARD
+
+#include <vector>
+#include <map>
+#include <string>
+#include "dice_distribution.hpp"
+
+class VariableMap
+{
+private:
+    std::map<std::string, double> num_list;
+    std::map<std::string, DiceDistr> dice_list;
+public:
+    VariableMap() = default;
+
+    void        add_num_variable(const std::string& key, double val);
+    void        add_dice_variable(const std::string& key, DiceDistr val);
+    double      get_num_variable(const std::string& key);
+    DiceDistr   get_dice_variable(const std::string& key);
+    bool        check_num_variable(const std::string& key);
+    bool        check_dice_variable(const std::string& key);
+};
+
+#endif//VARIABLE_MAP_HPP_GUARD

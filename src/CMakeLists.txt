@@ -22,6 +22,7 @@ add_library(dice_parser STATIC
     dice_pdf.cpp
     dice_distribution.cpp
     dice_parser.cpp
+    variable_map.cpp
 )
 
 target_include_directories(dice_parser PUBLIC

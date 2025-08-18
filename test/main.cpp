@@ -14,7 +14,7 @@ struct test_case_t
 struct err_case_t
 {
     std::string test_str;
-    err_code    ans;
+    action_code    ans;
 };
 
 TEST(valid, arithmetic)
@@ -124,20 +124,69 @@ TEST(valid, dice_rolls)
     }
 }
 
+TEST(valid, assignment)
+{
+    DiceParser parser;
+    EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 10")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("myvar")), 10.0);
+    EXPECT_EQ(std::get<double>(parser.parse("myvar-5.0")), 5.0);
+    EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 20/5")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("myvar")), 4.0);
+    EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 3d1")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("myvar")), 3.0);
+}
+
 TEST(invalid, error_codes)
 {
     std::vector<err_case_t> error_cases{
         // Invaliid tokens
-        {"~2d6", err_code::unknown_symbol},
-        {"7 6 -", err_code::invalid_syntax},
+        {"~2d6", action_code::unknown_symbol},
+        {"7 6 -", action_code::invalid_syntax},
     };
 
     DiceParser parser;
     for(auto error_case : error_cases)
     {
-        auto parse_ans = std::get<err_code>(parser.parse(error_case.test_str));
+        auto parse_ans = std::get<action_code>(parser.parse(error_case.test_str));
         EXPECT_EQ(parse_ans, error_case.ans) << error_case.test_str;
     }
+}
+
+TEST(variable_map, interface_tests)
+{
+    VariableMap var_map;
+    const std::string num_key = "num_key";
+    const double num_val = 8.0;
+    const std::string dice_key = "dice_key";
+    DiceDistr dice_val("5d1");
+
+    // check that the num_list and dice_lists are empty
+    ASSERT_FALSE(var_map.check_num_variable(num_key));
+    ASSERT_FALSE(var_map.check_num_variable(dice_key));
+    ASSERT_FALSE(var_map.check_dice_variable(dice_key));
+    ASSERT_FALSE(var_map.check_dice_variable(num_key));
+
+    // check add actions
+    var_map.add_num_variable(num_key, num_val);
+    ASSERT_TRUE(var_map.check_num_variable(num_key));
+    ASSERT_FALSE(var_map.check_dice_variable(num_key));
+    EXPECT_EQ(var_map.get_num_variable(num_key), num_val);
+
+    var_map.add_dice_variable(dice_key, dice_val);
+    ASSERT_TRUE(var_map.check_dice_variable(dice_key));
+    ASSERT_FALSE(var_map.check_num_variable(dice_key));
+    EXPECT_EQ(var_map.get_dice_variable(dice_key).roll(), dice_val.roll());
+
+    // check reassignment of same type
+    var_map.add_num_variable(num_key, num_val+1);
+    ASSERT_TRUE(var_map.check_num_variable(num_key));
+    ASSERT_FALSE(var_map.check_dice_variable(num_key));
+    EXPECT_EQ(var_map.get_num_variable(num_key), num_val+1);
+
+    // check reassignment of different type
+    var_map.add_num_variable(dice_key, num_val-1);
+    ASSERT_TRUE(var_map.check_num_variable(dice_key));
+    EXPECT_EQ(var_map.get_num_variable(dice_key), num_val-1);
 }
 
 int main(int argc, char** argv)

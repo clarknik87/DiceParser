@@ -3,6 +3,7 @@
 
 #include "parser.hpp"
 #include "scanner.hpp"
+#include "variable_map.hpp"
 #include "dice_parser/parser_result.hpp"
 
 class DiceParser
@@ -14,6 +15,7 @@ private:
     std::istringstream istream;
     std::ostringstream errstream;
     parse_result_t result;
+    VariableMap var_map;
 public:
     DiceParser();
     parse_result_t parse(const std::string& dice_str);
