@@ -13,6 +13,10 @@ private:
     std::map<std::string, DiceDistr> dice_list;
 public:
     VariableMap() = default;
+    VariableMap(
+        std::initializer_list<std::pair<const std::string, double>> num_variables,
+        std::initializer_list<std::pair<const std::string, DiceDistr>> dice_variables
+    );
 
     void        add_num_variable(const std::string& key, double val);
     void        add_dice_variable(const std::string& key, DiceDistr val);

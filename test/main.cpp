@@ -197,6 +197,24 @@ TEST(variable_map, interface_tests)
     EXPECT_EQ(var_map.get_num_variable(dice_key), num_val-1);
 }
 
+TEST(variable_map, ctor_tests)
+{
+    VariableMap var_map(
+        {
+            {"var1", 1.0},
+            {"var2", 2.0}
+        },
+        {
+            {"dice1", DiceDistr("3d1")},
+            {"dice2", DiceDistr("4d1")}
+        }
+    );
+    EXPECT_EQ(var_map.get_num_variable("var1"), 1.0);
+    EXPECT_EQ(var_map.get_num_variable("var2"), 2.0);
+    EXPECT_EQ(var_map.get_dice_variable("dice1"), DiceDistr("3d1").roll());
+    EXPECT_EQ(var_map.get_dice_variable("dice2"), DiceDistr("4d1").roll());
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

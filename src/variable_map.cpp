@@ -1,6 +1,11 @@
 #include "variable_map.hpp"
 #include "dice_parser/action_code.hpp"
 
+VariableMap::VariableMap(
+        std::initializer_list<std::pair<const std::string, double>> num_variables,
+        std::initializer_list<std::pair<const std::string, DiceDistr>> dice_variables
+    ) : num_list(num_variables), dice_list(dice_variables) {}
+
 void VariableMap::add_num_variable(const std::string& key, double val)
 {
     num_list.erase(key);

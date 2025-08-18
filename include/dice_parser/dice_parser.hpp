@@ -18,6 +18,7 @@ private:
     VariableMap var_map;
 public:
     DiceParser();
+    DiceParser(const VariableMap& map);
     parse_result_t parse(const std::string& dice_str);
 };
 
