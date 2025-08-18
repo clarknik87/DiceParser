@@ -18,8 +18,8 @@ int main(int argc, char* argv[])
     while(user_input != "quit")
     {
         std::cout << ">> ";
-        std::cin >> user_input;
-        if(user_input != "quit")
+        std::getline(std::cin, user_input);
+        if(user_input != "quit" && (user_input.find_first_not_of(" \t\n\v\f\r") != std::string::npos))
         {
             auto result = parser.parse(user_input);
             if(std::holds_alternative<double>(result))
