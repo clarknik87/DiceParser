@@ -20,6 +20,7 @@ public:
     DiceParser();
     DiceParser(const VariableMap& map);
     parse_result_t parse(const std::string& dice_str);
+    const VariableMap& get_variable_map() const;
 };
 
 #endif//DICE_PARSER_HPP_GUARD

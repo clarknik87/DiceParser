@@ -19,3 +19,8 @@ parse_result_t DiceParser::parse(const std::string& dice_str)
     }
     return result;
 }
+
+const VariableMap& DiceParser::get_variable_map() const
+{
+    return var_map;
+}
