@@ -24,3 +24,8 @@ const VariableMap& DiceParser::get_variable_map() const
 {
     return var_map;
 }
+
+void DiceParser::set_variable_map(const VariableMap& map)
+{
+    var_map = map;
+}

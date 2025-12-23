@@ -178,6 +178,39 @@ TEST(invalid, error_codes)
 
 }
 
+TEST(valid, set_var_map)
+{
+    VariableMap var_map(
+        {
+            {"const1", 1.0}
+        },
+        {
+            {"var1", 1.0}
+        },
+        {
+            {"cdice1", DiceDistr("3d1")}
+        },
+        {
+            {"dice1", DiceDistr("3d1")}
+        }
+    );
+    DiceParser parser;
+    
+    // check that none of the symbols are defined in the parser
+    EXPECT_EQ(std::get<action_code>(parser.parse("var1")), action_code::invalid_syntax);
+    EXPECT_EQ(std::get<action_code>(parser.parse("const1")), action_code::invalid_syntax);
+    EXPECT_EQ(std::get<action_code>(parser.parse("cdice1")), action_code::invalid_syntax);
+    EXPECT_EQ(std::get<action_code>(parser.parse("dice1")), action_code::invalid_syntax);
+    
+    parser.set_variable_map(var_map);
+
+    // check that the symbols are now defined after calling set_variable_map()
+    EXPECT_EQ(std::get<double>(parser.parse("var1")), 1.0);
+    EXPECT_EQ(std::get<double>(parser.parse("const1")), 1.0);
+    EXPECT_EQ(std::get<double>(parser.parse("cdice1")), 3.0);
+    EXPECT_EQ(std::get<double>(parser.parse("dice1")), 3.0);
+}
+
 TEST(variable_map, interface_tests)
 {
     VariableMap var_map;
@@ -233,6 +266,73 @@ TEST(variable_map, ctor_tests)
     EXPECT_EQ(var_map.get_num_variable("var2"), 2.0);
     EXPECT_EQ(var_map.get_dice_variable("dice1"), DiceDistr("3d1").roll());
     EXPECT_EQ(var_map.get_dice_variable("dice2"), DiceDistr("4d1").roll());
+}
+
+TEST(variable_map, ctor_test2)
+{
+    VariableMap var_map(
+        {
+            {"const1", 1.0},
+            {"const2", 2.0}
+        },
+        {
+            {"var1", 1.0},
+            {"var2", 2.0}
+        },
+        {
+            {"cdice1", DiceDistr("3d1")},
+            {"cdice2", DiceDistr("4d1")}
+        },
+        {
+            {"dice1", DiceDistr("3d1")},
+            {"dice2", DiceDistr("4d1")}
+        }
+    );
+    VariableMap var_cp(
+        var_map.get_num_const_map(),
+        var_map.get_dice_const_map(),
+        var_map.get_num_var_map(),
+        var_map.get_dice_var_map()
+    );
+    EXPECT_EQ(var_map.get_num_variable("var1"), var_cp.get_num_variable("var1"));
+    EXPECT_EQ(var_map.get_num_variable("var2"), var_cp.get_num_variable("var2"));
+    EXPECT_EQ(var_map.get_dice_variable("dice1").get_expr(), var_cp.get_dice_variable("dice1").get_expr());
+    EXPECT_EQ(var_map.get_dice_variable("dice2").get_expr(), var_map.get_dice_variable("dice2").get_expr());
+    EXPECT_EQ(var_map.get_num_constant("const1"), var_cp.get_num_constant("const1"));
+    EXPECT_EQ(var_map.get_num_constant("const2"), var_cp.get_num_constant("const2"));
+    EXPECT_EQ(var_map.get_dice_constant("cdice1").get_expr(), var_cp.get_dice_constant("cdice1").get_expr());
+    EXPECT_EQ(var_map.get_dice_constant("cdice2").get_expr(), var_cp.get_dice_constant("cdice2").get_expr());
+}
+
+TEST(variable_map, assignment_op)
+{
+    VariableMap var_map(
+        {
+            {"const1", 1.0},
+            {"const2", 2.0}
+        },
+        {
+            {"var1", 1.0},
+            {"var2", 2.0}
+        },
+        {
+            {"cdice1", DiceDistr("3d1")},
+            {"cdice2", DiceDistr("4d1")}
+        },
+        {
+            {"dice1", DiceDistr("3d1")},
+            {"dice2", DiceDistr("4d1")}
+        }
+    );
+    VariableMap var_cp = var_map;
+    EXPECT_EQ(var_map.get_num_variable("var1"), var_cp.get_num_variable("var1"));
+    EXPECT_EQ(var_map.get_num_variable("var2"), var_cp.get_num_variable("var2"));
+    EXPECT_EQ(var_map.get_dice_variable("dice1").get_expr(), var_cp.get_dice_variable("dice1").get_expr());
+    EXPECT_EQ(var_map.get_dice_variable("dice2").get_expr(), var_map.get_dice_variable("dice2").get_expr());
+    EXPECT_EQ(var_map.get_num_constant("const1"), var_cp.get_num_constant("const1"));
+    EXPECT_EQ(var_map.get_num_constant("const2"), var_cp.get_num_constant("const2"));
+    EXPECT_EQ(var_map.get_dice_constant("cdice1").get_expr(), var_cp.get_dice_constant("cdice1").get_expr());
+    EXPECT_EQ(var_map.get_dice_constant("cdice2").get_expr(), var_cp.get_dice_constant("cdice2").get_expr());
 }
 
 TEST(variable_map, const_tests)

@@ -8,6 +8,13 @@ VariableMap::VariableMap(
         std::initializer_list<std::pair<const std::string, DiceDistr>> dice_variables
     ) : const_num_list(cnum_variables), num_list(num_variables), const_dice_list(cdice_variables) ,dice_list(dice_variables) {}
 
+VariableMap::VariableMap(
+        std::map<std::string, double> cnum_variables,
+        std::map<std::string, DiceDistr> cdice_variables,
+        std::map<std::string, double> num_variables,
+        std::map<std::string, DiceDistr> dice_variables
+    ) : const_num_list(cnum_variables), num_list(num_variables), const_dice_list(cdice_variables) ,dice_list(dice_variables) {}
+
 void VariableMap::add_num_variable(const std::string& key, double val)
 {
     if(check_num_constant(key))
@@ -72,4 +79,24 @@ bool VariableMap::check_dice_constant(const std::string& key)
 bool VariableMap::check_dice_variable(const std::string& key)
 {
     return (dice_list.find(key) != dice_list.end());
+}
+
+std::map<std::string, double> VariableMap::get_num_const_map()
+{
+    return const_num_list;
+}
+
+std::map<std::string, DiceDistr> VariableMap::get_dice_const_map()
+{
+    return const_dice_list;
+}
+
+std::map<std::string, double> VariableMap::get_num_var_map()
+{
+    return num_list;
+}
+
+std::map<std::string, DiceDistr> VariableMap::get_dice_var_map()
+{
+    return dice_list;
 }
