@@ -20,6 +20,7 @@ public:
     DiceParser();
     DiceParser(const VariableMap& map);
     parse_result_t parse(const std::string& dice_str);
+    std::string interpolate(const std::string& intrp_str);
     const VariableMap& get_variable_map() const;
     void set_variable_map(const VariableMap& map);
 };
