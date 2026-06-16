@@ -9,10 +9,7 @@ DiceParser::DiceParser(const VariableMap& map) : scanner(std::cin, std::cerr, va
 
 parse_result_t DiceParser::parse(const std::string& dice_str)
 {
-    errstream.clear();
-    istream.clear();
-    istream.str(dice_str);
-    scanner.switch_streams(istream, errstream);
+    scanner.set_input(dice_str);
     try
     {
         parser.parse();

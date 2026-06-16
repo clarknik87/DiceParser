@@ -12,8 +12,6 @@ private:
     calc::Scanner scanner;
     calc::Parser parser;
 
-    std::istringstream istream;
-    std::ostringstream errstream;
     parse_result_t result;
     VariableMap var_map;
 public:
