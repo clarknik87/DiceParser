@@ -39,9 +39,7 @@
 
 %token <double>               DOUBLE_T
 %token <DiceDistr>            DICE_T
-%token <std::string>          DICE_CONSTANT
 %token <std::string>          DICE_VARIABLE
-%token <std::string>          NUM_CONSTANT
 %token <std::string>          NUM_VARIABLE
 %token <std::string>          NEW_VARIABLE
 
@@ -73,16 +71,12 @@ input:
   expr                        { result = parse_result_t{$1}; }
   | dexpr                     { result = parse_result_t{$1.roll()}; }
   | STATS LPAREN dexpr RPAREN { result = parse_result_t{$3}; }
-  | NEW_VARIABLE ASSIGN expr  { var_map.add_num_variable($1, $3); result = parse_result_t{action_code::action_success}; }
-  | NUM_VARIABLE ASSIGN expr  { var_map.add_num_variable($1, $3); result = parse_result_t{action_code::action_success}; }
-  | DICE_VARIABLE ASSIGN expr { var_map.add_num_variable($1, $3); result = parse_result_t{action_code::action_success}; }
-  | NEW_VARIABLE ASSIGN dexpr { var_map.add_dice_variable($1, $3); result = parse_result_t{action_code::action_success}; }
-  | NUM_VARIABLE ASSIGN dexpr { var_map.add_dice_variable($1, $3); result = parse_result_t{action_code::action_success}; }
-  | DICE_VARIABLE ASSIGN dexpr{ var_map.add_dice_variable($1, $3); result = parse_result_t{action_code::action_success}; }
-  | NUM_CONSTANT ASSIGN expr  { result = parse_result_t{action_code::const_assignment_err}; }
-  | NUM_CONSTANT ASSIGN dexpr { result = parse_result_t{action_code::const_assignment_err}; }
-  | DICE_CONSTANT ASSIGN expr { result = parse_result_t{action_code::const_assignment_err}; }
-  | DICE_CONSTANT ASSIGN dexpr{ result = parse_result_t{action_code::const_assignment_err}; }
+  | NEW_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_full_input()); result = parse_result_t{action_code::action_success}; }
+  | NUM_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_full_input()); result = parse_result_t{action_code::action_success}; }
+  | DICE_VARIABLE ASSIGN expr { var_map.add_variable($1, $3, scanner->get_full_input()); result = parse_result_t{action_code::action_success}; }
+  | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_full_input()); result = parse_result_t{action_code::action_success}; }
+  | NUM_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_full_input()); result = parse_result_t{action_code::action_success}; }
+  | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_full_input()); result = parse_result_t{action_code::action_success}; }
   | dexpr EQUAL_TO expr       { result = parse_result_t{$1 == $3}; }
   | dexpr NOT_EQUAL_TO expr   { result = parse_result_t{$1 != $3}; }
   | dexpr GREATER_EQUA expr   { result = parse_result_t{$1 >= $3}; }
@@ -100,7 +94,6 @@ input:
 expr:
   DOUBLE_T                    { $$ = $1; }
 | NUM_VARIABLE                { $$ = var_map.get_num_variable($1); }
-| NUM_CONSTANT                { $$ = var_map.get_num_constant($1); }
 | PLUS expr %prec UMINUS      { $$ = +$2; }
 | MINUS expr %prec UMINUS     { $$ = -$2; }
 | expr PLUS     expr          { $$ = $1 + $3; }
@@ -112,7 +105,6 @@ expr:
 dexpr:
   DICE_T                      { $$ = $1; }
 | DICE_VARIABLE               { $$ = var_map.get_dice_variable($1); }
-| DICE_CONSTANT               { $$ = var_map.get_dice_constant($1); }
 | PLUS dexpr %prec UMINUS     { $$ = +$2; }
 | MINUS dexpr %prec UMINUS    { $$ = -$2; }
 | dexpr PLUS     dexpr        { $$ = $1 + $3; }

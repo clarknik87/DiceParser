@@ -4,7 +4,7 @@
 constexpr char STOKEN[] = "{";
 constexpr char ETOKEN[] = "}"; 
 
-DiceParser::DiceParser() : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map) {}
+DiceParser::DiceParser() : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(&scanner, &parser) {}
 DiceParser::DiceParser(const VariableMap& map) : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(map) {}
 
 parse_result_t DiceParser::parse(const std::string& dice_str)
