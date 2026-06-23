@@ -1,4 +1,6 @@
 #include "variable_map.hpp"
+#include "scanner.hpp"
+#include "parser.hpp"
 #include "dice_parser/action_code.hpp"
 
 VariableMap::VariableMap(
@@ -13,6 +15,28 @@ VariableMap::VariableMap(
         std::initializer_list<std::pair<const std::string, const std::string>> variables
     ) : scanner(p_scanner), parser(p_parser) {}
 
+std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr)
+{
+    std::vector<std::string> dependencies;
+    if(scanner != nullptr)
+    {
+        scanner->set_input(expr);
+        auto sym = scanner->lex();
+        while(sym.kind() != calc::Parser::symbol_kind::S_YYEOF)
+        {
+            if(sym.kind() == calc::Parser::symbol_kind::S_DICE_VARIABLE 
+            || sym.kind() == calc::Parser::symbol_kind::S_NUM_VARIABLE
+            || sym.kind() == calc::Parser::symbol_kind::S_NEW_VARIABLE)
+            {
+                dependencies.emplace_back(scanner->YYText());
+            }
+            auto next_sym = scanner->lex();
+            sym.move(next_sym);
+        }
+    }
+    return dependencies;
+}
+
 void VariableMap::add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr, bool is_const)
 {
     if(check_key(key) && !is_const && var_list[key].is_const)
@@ -22,7 +46,7 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
         val,
         expr,
         is_const,
-        std::vector<std::string>()
+        lex_dependencies(expr)
     );
 }
 

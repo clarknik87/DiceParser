@@ -1,7 +1,7 @@
 #ifndef yyFlexLexer
 #include <FlexLexer.h>
 #endif //yyFlexLexer
-
+#include "parser.hpp"
 #include "variable_map.hpp"
 #include <string>
 #include <sstream>
@@ -31,6 +31,14 @@ public:
     std::string get_full_input() const
     {
         return full_input;
+    }
+
+    std::string get_assigned_expr() const
+    {
+        std::size_t idx = 0;
+        if(full_input.rfind("=") != full_input.npos)
+            idx = full_input.rfind("=")+1;
+        return full_input.substr(idx);
     }
 };
 

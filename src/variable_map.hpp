@@ -30,6 +30,7 @@ private:
 
     void add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr, bool is_const);
     bool check_key(const std::string& key);
+    std::vector<std::string> lex_dependencies(const std::string& expr);
 
 public:
     VariableMap() = delete;
