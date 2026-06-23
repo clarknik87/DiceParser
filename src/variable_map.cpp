@@ -13,17 +13,27 @@ VariableMap::VariableMap(
         std::initializer_list<std::pair<const std::string, const std::string>> variables
     ) : scanner(p_scanner), parser(p_parser) {}
 
-void VariableMap::add_variable(const std::string& key, std::variant<double, DiceDistr> val, std::string expr)
+void VariableMap::add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr, bool is_const)
 {
-    if((check_num_variable(key) || check_dice_variable(key)) && var_list[key].is_const)
+    if(check_key(key) && !is_const && var_list[key].is_const)
         throw action_code::const_assignment_err;
     var_list.erase(key);
     var_list[key] = UserVar(
         val,
         expr,
-        false,
+        is_const,
         std::vector<std::string>()
     );
+}
+
+void VariableMap::add_constant(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr)
+{
+    add_node(key, val, expr, true);
+}
+
+void VariableMap::add_variable(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr)
+{
+    add_node(key, val, expr, false);
 }
 
 double VariableMap::get_num_variable(const std::string& key)
@@ -40,14 +50,19 @@ DiceDistr VariableMap::get_dice_variable(const std::string& key)
     return std::get<DiceDistr>(var_list.at(key).value);
 }
 
+bool VariableMap::check_key(const std::string& key)
+{
+     return (var_list.find(key) != var_list.end());
+}
+
 bool VariableMap::check_num_variable(const std::string& key)
 {
-    return (var_list.find(key) != var_list.end()) && (std::holds_alternative<double>(var_list[key].value));
+    return check_key(key) && (std::holds_alternative<double>(var_list[key].value));
 }
 
 bool VariableMap::check_dice_variable(const std::string& key)
 {
-    return (var_list.find(key) != var_list.end()) && (std::holds_alternative<DiceDistr>(var_list[key].value));
+    return check_key(key) && (std::holds_alternative<DiceDistr>(var_list[key].value));
 }
 
 std::map<std::string, std::string> VariableMap::get_const_map()
