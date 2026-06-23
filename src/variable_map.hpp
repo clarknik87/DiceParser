@@ -46,10 +46,8 @@ public:
     bool        check_num_variable(const std::string& key);
     bool        check_dice_variable(const std::string& key);
 
-    // std::map<std::string, double>       get_num_const_map();
-    // std::map<std::string, DiceDistr>    get_dice_const_map();
-    // std::map<std::string, double>       get_num_var_map();
-    // std::map<std::string, DiceDistr>    get_dice_var_map();
+    std::map<std::string, std::string> get_const_map();
+    std::map<std::string, std::string> get_var_map();
 };
 
 #endif//VARIABLE_MAP_HPP_GUARD

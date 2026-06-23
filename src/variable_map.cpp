@@ -50,22 +50,24 @@ bool VariableMap::check_dice_variable(const std::string& key)
     return (var_list.find(key) != var_list.end()) && (std::holds_alternative<DiceDistr>(var_list[key].value));
 }
 
-// std::map<std::string, double> VariableMap::get_num_const_map()
-// {
-//     return const_num_list;
-// }
+std::map<std::string, std::string> VariableMap::get_const_map()
+{
+    std::map<std::string, std::string> const_map;
+    for(auto it : var_list)
+    {
+        if(it.second.is_const)
+            const_map[it.first] = it.second.expr;
+    }
+    return const_map;
+}
 
-// std::map<std::string, DiceDistr> VariableMap::get_dice_const_map()
-// {
-//     return const_dice_list;
-// }
-
-// std::map<std::string, double> VariableMap::get_num_var_map()
-// {
-//     return num_list;
-// }
-
-// std::map<std::string, DiceDistr> VariableMap::get_dice_var_map()
-// {
-//     return dice_list;
-// }
+std::map<std::string, std::string> VariableMap::get_var_map()
+{
+    std::map<std::string, std::string> var_map;
+    for(auto it : var_list)
+    {
+        if(!it.second.is_const)
+            var_map[it.first] = it.second.expr;
+    }
+    return var_map;
+}
