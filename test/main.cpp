@@ -150,6 +150,40 @@ TEST(valid, assignment)
     EXPECT_EQ(std::get<double>(parser.parse("newvar2")), 6.0);
 }
 
+TEST(var_map, ctor)
+{
+    std::vector<std::pair<const std::string, const std::string>> constants{
+        {"A", "0"}
+    };
+    std::vector<std::pair<const std::string, const std::string>> variables{
+        {"C", "A + B"},
+        {"E", "1"},
+        {"B", "D"},
+        {"D", "6"}
+    };
+    DiceParser parser(
+        constants,
+        variables
+    );
+    // Verify all variables were parsed correctly
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 0.0);
+    EXPECT_EQ(std::get<double>(parser.parse("B")), 6.0);
+    EXPECT_EQ(std::get<double>(parser.parse("C")), 6.0);
+    EXPECT_EQ(std::get<double>(parser.parse("D")), 6.0);
+    EXPECT_EQ(std::get<double>(parser.parse("E")), 1.0);
+    // Verify constants and variables were not mixed
+    EXPECT_NO_THROW(parser.get_variable_map().get_const_map().at("A"));
+    EXPECT_NO_THROW(parser.get_variable_map().get_var_map().at("B"));
+    EXPECT_NO_THROW(parser.get_variable_map().get_var_map().at("C"));
+    EXPECT_NO_THROW(parser.get_variable_map().get_var_map().at("D"));
+    EXPECT_NO_THROW(parser.get_variable_map().get_var_map().at("E"));
+    EXPECT_ANY_THROW(parser.get_variable_map().get_var_map().at("A"));
+    EXPECT_ANY_THROW(parser.get_variable_map().get_const_map().at("B"));
+    EXPECT_ANY_THROW(parser.get_variable_map().get_const_map().at("C"));
+    EXPECT_ANY_THROW(parser.get_variable_map().get_const_map().at("D"));
+    EXPECT_ANY_THROW(parser.get_variable_map().get_const_map().at("E"));
+}
+
 // TEST(invalid, error_codes)
 // {
 //     std::vector<err_case_t> error_cases{

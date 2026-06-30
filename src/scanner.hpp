@@ -1,3 +1,6 @@
+#ifndef SCANNER_HPP_GUARD
+#define SCANNER_HPP_GUARD
+
 #ifndef yyFlexLexer
 #include <FlexLexer.h>
 #endif //yyFlexLexer
@@ -43,3 +46,5 @@ public:
 };
 
 }
+
+#endif //SCANNER_HPP_GUARD

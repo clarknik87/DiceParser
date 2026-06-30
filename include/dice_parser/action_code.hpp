@@ -11,6 +11,7 @@ enum class action_code
     variable_undefined,
     constant_undefined,
     const_assignment_err,
+    cyclic_graph_err,
 };
 
 inline std::ostream& operator<<(std::ostream& os, action_code& code)
