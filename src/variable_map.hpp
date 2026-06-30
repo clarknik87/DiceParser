@@ -35,6 +35,8 @@ private:
     void add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr, bool is_const);
     bool check_key(const std::string& key) const;
     std::vector<std::string> lex_dependencies(const std::string& expr) const;
+    std::vector<std::string> topological_sort(std::map<std::string, std::vector<std::string>> list) const;
+    bool check_cycles() const;
 
 public:
     VariableMap() = delete;
@@ -60,8 +62,6 @@ public:
 
     std::map<std::string, std::string> get_const_map() const;
     std::map<std::string, std::string> get_var_map() const;
-
-    std::vector<std::string> topological_sort(std::map<std::string, std::vector<std::string>> list) const;
 };
 
 #endif//VARIABLE_MAP_HPP_GUARD

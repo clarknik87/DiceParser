@@ -105,6 +105,22 @@ std::vector<std::string> VariableMap::topological_sort(std::map<std::string, std
     return L;
 }
 
+bool VariableMap::check_cycles() const
+{
+    try
+    {
+        std::map<std::string, std::vector<std::string>> list;
+        for(auto i : var_list)
+            list.insert({i.first, i.second.dependencies});
+        topological_sort(list);
+    }
+    catch(const std::exception& e)
+    {
+        return false;
+    }
+    return true;
+}
+
 std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr) const
 {
     std::vector<std::string> dependencies;
@@ -126,21 +142,45 @@ std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr) 
 
 void VariableMap::add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr, bool is_const)
 {
-    if(check_key(key) && !is_const && var_list[key].is_const)
-        throw action_code::const_assignment_err;
+    std::vector<std::string> dependencies;
+    if(check_key(key))
+    {
+        if(!is_const && var_list[key].is_const)
+            throw action_code::const_assignment_err;
+        dependencies = std::move(var_list[key].dependencies);
+    }
+    
     var_list.erase(key);
     var_list[key] = UserVar(
         val,
         expr,
         is_const,
-        {}
+        dependencies
     );
     for(auto d : lex_dependencies(expr))
     {
         if(check_key(d))
             var_list[d].dependencies.emplace_back(key);
         else
-            throw 0;
+            throw action_code::variable_undefined;
+    }
+    if(!check_cycles())
+        throw action_code::cyclic_graph_err; 
+    // update other nodes
+    for(auto d : dependencies)
+    {
+        if(check_key(d))
+        {
+            auto val = parser.parse(var_list[d].expr);
+            if(std::holds_alternative<double>(val))
+                var_list[d].value = std::get<double>(val);
+            else if(std::holds_alternative<DiceDistr>(val))
+                var_list[d].value = std::get<DiceDistr>(val);
+            else
+                throw action_code::invalid_syntax;
+        }
+        else
+            throw action_code::variable_undefined;
     }
 }
 
