@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <variant>
+#include <queue>
 #include "variable_map.hpp"
 #include "scanner.hpp"
 #include "dice_parser/dice_parser.hpp"
@@ -10,6 +11,12 @@ VariableMap::VariableMap(
         calc::Scanner &p_scanner,
         DiceParser &p_parser
     ) : scanner(p_scanner), parser(p_parser) {}
+
+VariableMap::VariableMap(
+        calc::Scanner &p_scanner,
+        DiceParser &p_parser,
+        const VariableMap& p_map
+    ) : scanner(p_scanner), parser(p_parser), var_list(p_map.var_list) {}
 
 VariableMap::VariableMap(
         calc::Scanner &p_scanner,
@@ -166,21 +173,36 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
     }
     if(!check_cycles())
         throw action_code::cyclic_graph_err; 
+    
     // update other nodes
-    for(auto d : dependencies)
+    std::queue<std::string> update_stack;
+    update_stack.push(key);
+
+    while(!update_stack.empty())
     {
-        if(check_key(d))
+        for(auto d : var_list[update_stack.front()].dependencies)
         {
-            auto val = parser.parse(var_list[d].expr);
-            if(std::holds_alternative<double>(val))
-                var_list[d].value = std::get<double>(val);
-            else if(std::holds_alternative<DiceDistr>(val))
-                var_list[d].value = std::get<DiceDistr>(val);
+            if(check_key(d))
+            {
+                // the parser is not reentrant, it wipes the scanner state with
+                // each call. For this method to work, we need to instantiate a new
+                // parser to evaluate the expr. We pass in *this to ensure that the
+                // temp parser has the most up to date variable data
+                DiceParser temp_parser(*this);
+                auto val = temp_parser.parse(var_list[d].expr);
+                if(std::holds_alternative<double>(val))
+                    var_list[d].value = std::get<double>(val);
+                else if(std::holds_alternative<DiceDistr>(val))
+                    var_list[d].value = std::get<DiceDistr>(val);
+                else
+                    throw action_code::invalid_syntax;
+                for(auto nd : var_list[d].dependencies)
+                    update_stack.push(nd);
+            }
             else
-                throw action_code::invalid_syntax;
+                throw action_code::variable_undefined;
         }
-        else
-            throw action_code::variable_undefined;
+        update_stack.pop();
     }
 }
 

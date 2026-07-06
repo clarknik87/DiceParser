@@ -5,8 +5,8 @@ constexpr char STOKEN[] = "{";
 constexpr char ETOKEN[] = "}"; 
 
 DiceParser::DiceParser() : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(scanner, *this) {}
-// DiceParser::DiceParser(const VariableMap& map) : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(map) {}
-DiceParser::DiceParser(expr_list& constants, expr_list& variables) : 
+DiceParser::DiceParser(const VariableMap& map) : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(map) {}
+DiceParser::DiceParser(expr_list constants, expr_list variables) : 
     scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(scanner, *this, constants, variables) {}
 
 parse_result_t DiceParser::parse(const std::string& dice_str)
@@ -45,12 +45,7 @@ std::string DiceParser::interpolate(const std::string& intrp_str)
     return str;
 }
 
-const VariableMap& DiceParser::get_variable_map() const
+VariableMap& DiceParser::get_variable_map()
 {
     return var_map;
 }
-
-// void DiceParser::set_variable_map(const VariableMap& map)
-// {
-//     var_map = map;
-// }

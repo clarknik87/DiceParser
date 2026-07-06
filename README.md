@@ -31,14 +31,14 @@ using parse_result_t = std::variant<double, DiceDistr, action_code>;
 ```
 `action_code` is an enum defined in `parser_result.hpp`. This is returned if there is any error in the parsing process, ie unknown symbols, or invalid formual syntax, or if a successful action has no meaningful output, ie variable assignment.
 
-`double` is returned in most cases. Any dice formulas in the string are "rolled" and the remaining math is performed as expected.
+`double` is returned as the result of basic mathematical operations.
 
-`DiceDistr` is returned if the formula is enclosed with the "stats()" function. DiceDistr is a class that contains the full probability density function of the formula entered. For example, "stats(1d6)" with return a DiceDistr representing a uniform distribution between 1 and 6. DiceDistr implements functions like `minimum()`, `maximum()`, `expected_value()`, `variance()`, and `standard_dev()` that can be used to analyze the associated pdf. The associated pdf is stored internally using a 2D Eigen matrix. The second row stores the roll value, the first row stores the asscoiated probability. A standard d4 (four sided die) would look like this:
+`DiceDistr` is returned if the expression evaluates to a dice probability distribution which generally occurs whenever a dice formula occurs anywhere in the expression. DiceDistr is a class that contains the full probability density function of the formula entered. For example, "1d6" will return a DiceDistr representing a uniform distribution between 1 and 6. DiceDistr implements functions like `minimum()`, `maximum()`, `expected_value()`, `variance()`, and `standard_dev()` that can be used to analyze the associated pdf. The associated pdf is stored internally using a 2D Eigen matrix. The second row stores the roll value, the first row stores the asscoiated probability. A standard d4 (four sided die) would look like this:
 ```
 [[0.25 0.25 0.25 0.25],
 [1    2    3    4]]
 ```
-Calling `roll()` on a dice formula simulates a roll on that formula.
+Calling `roll()` on a dice formula simulates a roll on that formula and returns a double.
 
 ## Syntax
 The parser supports the following kind syntax structures (some based off popular TTRPG language):
@@ -54,3 +54,6 @@ Finally the parser supports assignment syntax, using a single `=`,  to allow the
 
 ## Dependencies
 The parser requires the user to have the `Bison` and `Flex` utilities installed. The library also depends on the `Eigen` library for the underlying matrix operations.
+
+## Future Development
+- add in more built-in functions

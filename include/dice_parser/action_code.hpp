@@ -36,6 +36,12 @@ inline std::ostream& operator<<(std::ostream& os, action_code& code)
     case action_code::const_assignment_err:
         os << "action_code::const_assignment_err";
         break;
+    case action_code::cyclic_graph_err:
+        os << "action_code::cyclic_graph_err";
+        break;
+    default:
+        os << "action_code:: unknown code returned";
+        break;
     }
     return os;
 }

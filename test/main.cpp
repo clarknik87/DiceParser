@@ -125,8 +125,8 @@ TEST(valid, dice_rolls)
     DiceParser parser;
     for(auto test_case : test_cases)
     {
-        auto parse_ans = std::get<double>(parser.parse(test_case.test_str));
-        EXPECT_EQ(parse_ans, test_case.ans) << test_case.test_str;
+        auto parse_ans = std::get<DiceDistr>(parser.parse(test_case.test_str));
+        EXPECT_EQ(parse_ans.roll(), test_case.ans) << test_case.test_str;
     }
 }
 
@@ -139,15 +139,15 @@ TEST(valid, assignment)
     EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 20/5")), action_code::action_success);
     EXPECT_EQ(std::get<double>(parser.parse("myvar")), 4.0);
     EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 3d1")), action_code::action_success);
-    EXPECT_EQ(std::get<double>(parser.parse("myvar")), 3.0);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("myvar")).roll(), 3.0);
     EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 12.0")), action_code::action_success);
     EXPECT_EQ(std::get<double>(parser.parse("myvar")), 12.0);
     EXPECT_EQ(std::get<action_code>(parser.parse("newvar = myvar+2.0")), action_code::action_success);
     EXPECT_EQ(std::get<double>(parser.parse("newvar")), 14.0);
     EXPECT_EQ(std::get<action_code>(parser.parse("myvar2 = 4d1")), action_code::action_success);
-    EXPECT_EQ(std::get<double>(parser.parse("myvar2")), 4.0);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("myvar2")).roll(), 4.0);
     EXPECT_EQ(std::get<action_code>(parser.parse("newvar2 = myvar2+2.0")), action_code::action_success);
-    EXPECT_EQ(std::get<double>(parser.parse("newvar2")), 6.0);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("newvar2")).roll(), 6.0);
 }
 
 TEST(var_map, ctor)
@@ -184,98 +184,89 @@ TEST(var_map, ctor)
     EXPECT_ANY_THROW(parser.get_variable_map().get_const_map().at("E"));
 }
 
-// TEST(invalid, error_codes)
-// {
-//     std::vector<err_case_t> error_cases{
-//         // Invaliid tokens
-//         {"~2d6", action_code::unknown_symbol},
-//         {"7 6 -", action_code::invalid_syntax},
-//     };
-
-//     VariableMap var_map(
-//         {
-//             {"const1", "1.0"},
-//             {"const2", "2.0"}
-//         },
-//         {
-//             {"cdice1", "3d1"},
-//             {"cdice2", "4d1"}
-//         }
-//     );
-//     DiceParser parser(var_map);
-//     for(auto error_case : error_cases)
-//     {
-//         auto parse_ans = std::get<action_code>(parser.parse(error_case.test_str));
-//         EXPECT_EQ(parse_ans, error_case.ans) << error_case.test_str;
-//     }
-
-//     EXPECT_EQ(std::get<action_code>(parser.parse("const1 = 5.0")), action_code::const_assignment_err);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("const2 = 3d6")), action_code::const_assignment_err);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("cdice1 = 6.7")), action_code::const_assignment_err);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("cdice2 = 3d6")), action_code::const_assignment_err);
-
-// }
-
-// TEST(valid, set_var_map)
-// {
-//     VariableMap var_map(
-//         {
-//             {"const1", "1.0"},
-//             {"cdice1", "3d1"}
-//         },
-//         {
-//             {"var1", "1.0"},
-//             {"dice1", "3d1"}
-//         }
-//     );
-//     DiceParser parser;
+TEST(invalid, error_codes)
+{
+    std::vector<err_case_t> error_cases{
+        // Invaliid tokens
+        {"~2d6", action_code::unknown_symbol},
+        {"7 6 -", action_code::invalid_syntax},
+    };
     
-//     // check that none of the symbols are defined in the parser
-//     EXPECT_EQ(std::get<action_code>(parser.parse("var1")), action_code::invalid_syntax);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("const1")), action_code::invalid_syntax);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("cdice1")), action_code::invalid_syntax);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("dice1")), action_code::invalid_syntax);
+    DiceParser parser(
+    {
+        {"const1", "1.0"},
+        {"const2", "2.0"},
+        {"cdice1", "3d1"},
+        {"cdice2", "4d1"}
+    },
+    {}
+    );
+    for(auto error_case : error_cases)
+    {
+        auto parse_ans = std::get<action_code>(parser.parse(error_case.test_str));
+        EXPECT_EQ(parse_ans, error_case.ans) << error_case.test_str;
+    }
+
+    EXPECT_EQ(std::get<action_code>(parser.parse("const1 = 5.0")), action_code::const_assignment_err);
+    EXPECT_EQ(std::get<action_code>(parser.parse("const2 = 3d6")), action_code::const_assignment_err);
+    EXPECT_EQ(std::get<action_code>(parser.parse("cdice1 = 6.7")), action_code::const_assignment_err);
+    EXPECT_EQ(std::get<action_code>(parser.parse("cdice2 = 3d6")), action_code::const_assignment_err);
+
+}
+
+TEST(variable_map, add_node)
+{
+    DiceParser parser;
     
-//     parser.set_variable_map(var_map);
+    // check that none of the symbols are defined in the parser
+    EXPECT_EQ(std::get<action_code>(parser.parse("var1")), action_code::invalid_syntax);
+    EXPECT_EQ(std::get<action_code>(parser.parse("const1")), action_code::invalid_syntax);
+    EXPECT_EQ(std::get<action_code>(parser.parse("cdice1")), action_code::invalid_syntax);
+    EXPECT_EQ(std::get<action_code>(parser.parse("dice1")), action_code::invalid_syntax);
+    
+    auto& var_map = parser.get_variable_map();
+    var_map.add_constant("const1", 1.0, "1.0");
+    var_map.add_constant("cdice1", DiceDistr("3d1"), "3d1");
+    var_map.add_variable("var1", 1.0, "1.0");
+    var_map.add_variable("dice1", DiceDistr("3d1"), "3d1");
 
-//     // check that the symbols are now defined after calling set_variable_map()
-//     EXPECT_EQ(std::get<double>(parser.parse("var1")), 1.0);
-//     EXPECT_EQ(std::get<double>(parser.parse("const1")), 1.0);
-//     EXPECT_EQ(std::get<double>(parser.parse("cdice1")), 3.0);
-//     EXPECT_EQ(std::get<double>(parser.parse("dice1")), 3.0);
-// }
+    // check that the symbols are now defined
+    EXPECT_EQ(std::get<double>(parser.parse("var1")), 1.0);
+    EXPECT_EQ(std::get<double>(parser.parse("const1")), 1.0);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("cdice1")).roll(), 3.0);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("dice1")).roll(), 3.0);
+}
 
-// TEST(interpolate, valid)
-// {
-//     constexpr int dex{3};
-//     constexpr int prof{2};
+TEST(interpolate, valid)
+{
+    constexpr int dex{3};
+    constexpr int prof{2};
 
-//     std::vector<interpolate_case_t> test_cases{
-//         {"{}", ""},
-//         {"{dex}", std::to_string(dex)},
-//         {"{prof}", std::to_string(prof)},
-//         {"{7+3}", std::to_string(10)},
-//         {"1d20+{prof}", "1d20+" + std::to_string(prof)},
-//         {"prof", "prof"},
-//         {"1d8+{dex+prof}", "1d8+" + std::to_string(dex+prof)},
-//         {"2d6+{dex+4}", "2d6+" + std::to_string(dex+4)},
-//         {"{dex}+1d20+{prof}", std::to_string(dex)+"+1d20+"+std::to_string(prof)},
-//         {"{}{}{}{}{}dex", "dex"},
-//     };
+    std::vector<interpolate_case_t> test_cases{
+        {"{}", ""},
+        {"{dex}", std::to_string(dex)},
+        {"{prof}", std::to_string(prof)},
+        {"{7+3}", std::to_string(10)},
+        {"1d20+{prof}", "1d20+" + std::to_string(prof)},
+        {"prof", "prof"},
+        {"1d8+{dex+prof}", "1d8+" + std::to_string(dex+prof)},
+        {"2d6+{dex+4}", "2d6+" + std::to_string(dex+4)},
+        {"{dex}+1d20+{prof}", std::to_string(dex)+"+1d20+"+std::to_string(prof)},
+        {"{}{}{}{}{}dex", "dex"},
+    };
 
-//     VariableMap var_map(
-//         {
-//             {"dex", std::to_string(dex)},
-//             {"prof", std::to_string(prof)}
-//         },
-//         {}
-//     );
-//     DiceParser parser(var_map);
-//     for(auto test_case: test_cases)
-//     {
-//         EXPECT_EQ(parser.interpolate(test_case.test), test_case.ans);
-//     }
-// }
+    DiceParser parser(
+        {
+            {"dex", std::to_string(dex)},
+            {"prof", std::to_string(prof)}
+        },
+        {}
+    );
+    for(auto test_case: test_cases)
+    {
+        EXPECT_EQ(parser.interpolate(test_case.test), test_case.ans);
+    }
+}
 
 TEST(interpolate, invalid)
 {
@@ -299,137 +290,98 @@ TEST(interpolate, invalid)
     }
 }
 
-// TEST(variable_map, interface_tests)
-// {
-//     VariableMap var_map;
-//     const std::string num_key = "num_key";
-//     const double num_val = 8.0;
-//     const std::string dice_key = "dice_key";
-//     DiceDistr dice_val("5d1");
+TEST(variable_map, interface_tests)
+{
+    DiceParser parser;
+    auto& var_map = parser.get_variable_map();
+    const std::string num_key = "num_key";
+    const double num_val = 8.0;
+    const std::string dice_key = "dice_key";
+    DiceDistr dice_val("5d1");
 
-//     // check that the num_list and dice_lists are empty
-//     ASSERT_FALSE(var_map.check_num_variable(num_key));
-//     ASSERT_FALSE(var_map.check_num_variable(dice_key));
-//     ASSERT_FALSE(var_map.check_dice_variable(dice_key));
-//     ASSERT_FALSE(var_map.check_dice_variable(num_key));
+    // check that the num_list and dice_lists are empty
+    ASSERT_FALSE(var_map.check_num_variable(num_key));
+    ASSERT_FALSE(var_map.check_num_variable(dice_key));
+    ASSERT_FALSE(var_map.check_dice_variable(dice_key));
+    ASSERT_FALSE(var_map.check_dice_variable(num_key));
 
-//     // check add actions
-//     var_map.add_num_variable(num_key, num_val);
-//     ASSERT_TRUE(var_map.check_num_variable(num_key));
-//     ASSERT_FALSE(var_map.check_dice_variable(num_key));
-//     EXPECT_EQ(var_map.get_num_variable(num_key), num_val);
+    // check add actions
+    var_map.add_variable(num_key, num_val, std::to_string(num_val));
+    ASSERT_TRUE(var_map.check_num_variable(num_key));
+    ASSERT_FALSE(var_map.check_dice_variable(num_key));
+    EXPECT_EQ(var_map.get_num_variable(num_key), num_val);
 
-//     var_map.add_dice_variable(dice_key, dice_val);
-//     ASSERT_TRUE(var_map.check_dice_variable(dice_key));
-//     ASSERT_FALSE(var_map.check_num_variable(dice_key));
-//     EXPECT_EQ(var_map.get_dice_variable(dice_key).roll(), dice_val.roll());
+    var_map.add_variable(dice_key, dice_val, dice_val.get_expr());
+    ASSERT_TRUE(var_map.check_dice_variable(dice_key));
+    ASSERT_FALSE(var_map.check_num_variable(dice_key));
+    EXPECT_EQ(var_map.get_dice_variable(dice_key).roll(), dice_val.roll());
 
-//     // check reassignment of same type
-//     var_map.add_num_variable(num_key, num_val+1);
-//     ASSERT_TRUE(var_map.check_num_variable(num_key));
-//     ASSERT_FALSE(var_map.check_dice_variable(num_key));
-//     EXPECT_EQ(var_map.get_num_variable(num_key), num_val+1);
+    // check reassignment of same type
+    var_map.add_variable(num_key, num_val+1, std::to_string(num_val+1));
+    ASSERT_TRUE(var_map.check_num_variable(num_key));
+    ASSERT_FALSE(var_map.check_dice_variable(num_key));
+    EXPECT_EQ(var_map.get_num_variable(num_key), num_val+1);
 
-//     // check reassignment of different type
-//     var_map.add_num_variable(dice_key, num_val-1);
-//     ASSERT_TRUE(var_map.check_num_variable(dice_key));
-//     EXPECT_EQ(var_map.get_num_variable(dice_key), num_val-1);
-// }
+    // check reassignment of different type
+    var_map.add_variable(dice_key, num_val-1, std::to_string(num_val-1));
+    ASSERT_TRUE(var_map.check_num_variable(dice_key));
+    EXPECT_EQ(var_map.get_num_variable(dice_key), num_val-1);
+}
 
-// TEST(variable_map, ctor_tests)
-// {
-//     VariableMap var_map(
-//         {
-//             {"var1", "1.0"},
-//             {"var2", "2.0"}
-//         },
-//         {
-//             {"dice1", "3d1"},
-//             {"dice2", "4d1"}
-//         }
-//     );
-//     EXPECT_EQ(var_map.get_num_variable("var1"), 1.0);
-//     EXPECT_EQ(var_map.get_num_variable("var2"), 2.0);
-//     EXPECT_EQ(var_map.get_dice_variable("dice1"), DiceDistr("3d1").roll());
-//     EXPECT_EQ(var_map.get_dice_variable("dice2"), DiceDistr("4d1").roll());
-// }
+TEST(variable_map, ctor_tests)
+{
+    DiceParser parser(
+        {
+            {"var1", "1.0"},
+            {"var2", "2.0"},
+            {"dice1", "3d1"},
+            {"dice2", "4d1"}
+        },
+        {}
+    );
+    auto& var_map = parser.get_variable_map();
+    EXPECT_EQ(var_map.get_num_variable("var1"), 1.0);
+    EXPECT_EQ(var_map.get_num_variable("var2"), 2.0);
+    EXPECT_EQ(var_map.get_dice_variable("dice1").roll(), DiceDistr("3d1").roll());
+    EXPECT_EQ(var_map.get_dice_variable("dice2").roll(), DiceDistr("4d1").roll());
+}
 
-// TEST(variable_map, ctor_test2)
-// {
-    // VariableMap var_map(
-    //     {
-    //         {"const1", "1.0"},
-    //         {"const2", "2.0"},
-    //         {"cdice1", "3d1"},
-    //         {"cdice2", "4d1"}
-    //     },
-    //     {
-    //         {"var1", "1.0"},
-    //         {"var2", "2.0"},
-    //         {"dice1", "3d1"},
-    //         {"dice2", "4d1"}
-    //     }
-    // );
-//     VariableMap var_cp(
-//         var_map.get_num_const_map(),
-//         var_map.get_dice_const_map(),
-//         var_map.get_num_var_map(),
-//         var_map.get_dice_var_map()
-//     );
-//     EXPECT_EQ(var_map.get_num_variable("var1"), var_cp.get_num_variable("var1"));
-//     EXPECT_EQ(var_map.get_num_variable("var2"), var_cp.get_num_variable("var2"));
-//     EXPECT_EQ(var_map.get_dice_variable("dice1").get_expr(), var_cp.get_dice_variable("dice1").get_expr());
-//     EXPECT_EQ(var_map.get_dice_variable("dice2").get_expr(), var_map.get_dice_variable("dice2").get_expr());
-//     EXPECT_EQ(var_map.get_num_constant("const1"), var_cp.get_num_constant("const1"));
-//     EXPECT_EQ(var_map.get_num_constant("const2"), var_cp.get_num_constant("const2"));
-//     EXPECT_EQ(var_map.get_dice_constant("cdice1").get_expr(), var_cp.get_dice_constant("cdice1").get_expr());
-//     EXPECT_EQ(var_map.get_dice_constant("cdice2").get_expr(), var_cp.get_dice_constant("cdice2").get_expr());
-// }
-
-// TEST(variable_map, assignment_op)
-// {
-//     VariableMap var_map(
-//         {
-//             {"const1", "1.0"},
-//             {"const2", "2.0"},
-//             {"cdice1", "3d1"},
-//             {"cdice2", "4d1"}
-//         },
-//         {
-//             {"var1", "1.0"},
-//             {"var2", "2.0"},
-//             {"dice1", "3d1"},
-//             {"dice2", "4d1"}
-//         }
-//     );
-//     VariableMap var_cp = var_map;
-//     EXPECT_EQ(var_map.get_num_variable("var1"), var_cp.get_num_variable("var1"));
-//     EXPECT_EQ(var_map.get_num_variable("var2"), var_cp.get_num_variable("var2"));
-//     EXPECT_EQ(var_map.get_dice_variable("dice1").get_expr(), var_cp.get_dice_variable("dice1").get_expr());
-//     EXPECT_EQ(var_map.get_dice_variable("dice2").get_expr(), var_map.get_dice_variable("dice2").get_expr());
-//     EXPECT_EQ(var_map.get_num_constant("const1"), var_cp.get_num_constant("const1"));
-//     EXPECT_EQ(var_map.get_num_constant("const2"), var_cp.get_num_constant("const2"));
-//     EXPECT_EQ(var_map.get_dice_constant("cdice1").get_expr(), var_cp.get_dice_constant("cdice1").get_expr());
-//     EXPECT_EQ(var_map.get_dice_constant("cdice2").get_expr(), var_cp.get_dice_constant("cdice2").get_expr());
-// }
-
-// TEST(variable_map, const_tests)
-// {
-//     VariableMap var_map(
-//         {
-//             {"var1", "1.0"},
-//             {"var2", "2.0"}
-//         },
-//         {
-//             {"dice1", "3d1"},
-//             {"dice2", "4d1"}
-//         }
-//     );
-//     EXPECT_EQ(var_map.get_num_constant("const1"), 1.0);
-//     EXPECT_EQ(var_map.get_num_constant("const2"), 2.0);
-//     EXPECT_EQ(var_map.get_dice_constant("cdice1"), DiceDistr("3d1").roll());
-//     EXPECT_EQ(var_map.get_dice_constant("cdice2"), DiceDistr("4d1").roll());
-// }
+TEST(variable_map, update_dependencies)
+{
+    {
+        DiceParser parser(
+            {},
+            {
+                {"A", "1"},
+                {"B", "A+4"},
+            }
+        );
+        ASSERT_EQ(std::get<double>(parser.parse("A")), 1.0);
+        ASSERT_EQ(std::get<double>(parser.parse("B")), 5.0);
+        EXPECT_EQ(std::get<action_code>(parser.parse("A = 4")), action_code::action_success);
+        EXPECT_EQ(std::get<double>(parser.parse("B")), 8.0);
+    }
+    {
+        DiceParser parser(
+            {},
+            {
+                {"A", "1"},
+                {"B", "A+4"},
+                {"C", "A+B"},
+                {"D", "C-1"},
+            }
+        );
+        ASSERT_EQ(std::get<double>(parser.parse("A")), 1.0);
+        ASSERT_EQ(std::get<double>(parser.parse("B")), 5.0);
+        ASSERT_EQ(std::get<double>(parser.parse("C")), 6.0);
+        ASSERT_EQ(std::get<double>(parser.parse("D")), 5.0);
+        EXPECT_EQ(std::get<action_code>(parser.parse("A = 4")), action_code::action_success);
+        EXPECT_EQ(std::get<double>(parser.parse("A")), 4.0);
+        EXPECT_EQ(std::get<double>(parser.parse("B")), 8.0);
+        EXPECT_EQ(std::get<double>(parser.parse("C")), 12.0);
+        EXPECT_EQ(std::get<double>(parser.parse("D")), 11.0);
+    }
+}
 
 int main(int argc, char** argv)
 {

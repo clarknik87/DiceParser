@@ -47,6 +47,11 @@ public:
     VariableMap(
         calc::Scanner &p_scanner,
         DiceParser &p_parser,
+        const VariableMap& p_map
+    );
+    VariableMap(
+        calc::Scanner &p_scanner,
+        DiceParser &p_parser,
         expr_list& constants,
         expr_list& variables
     );
