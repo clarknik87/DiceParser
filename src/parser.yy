@@ -63,7 +63,6 @@
 %token                        LESS_THAN
 %token                        ASSIGN
 %token                        COMMA
-%token                        STATS
 
 
 %left                         PLUS MINUS
@@ -75,7 +74,6 @@
 input:
   expr                        { result = parse_result_t{$1}; }
   | dexpr                     { result = parse_result_t{$1}; }
-  | STATS LPAREN dexpr RPAREN { result = parse_result_t{$3}; }
   | NEW_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   | NUM_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   | DICE_VARIABLE ASSIGN expr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }

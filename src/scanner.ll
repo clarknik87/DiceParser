@@ -28,7 +28,6 @@ dice_max_s  "max("([0-9]+)"d"([0-9]+)")"
 dice_min_s  "min("([0-9]+)"d"([0-9]+)")"
 dice_max_c  "max("([0-9]+)","([0-9]+)"d"([0-9]+)")"
 dice_min_c  "min("([0-9]+)","([0-9]+)"d"([0-9]+)")"
-stats       "stats"
 variable    [a-zA-Z_][a-zA-Z0-9_]*
 
 %%
@@ -55,7 +54,6 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
 "<"               return calc::Parser::make_LESS_THAN();
 "="               return calc::Parser::make_ASSIGN();
 ","               return calc::Parser::make_COMMA();
-{stats}           return calc::Parser::make_STATS();
 [ \t\r\n]+        { /* skip whitespace */ }
 {variable}        {
                     std::string token{YYText()};
