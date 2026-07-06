@@ -8,6 +8,7 @@
 #include "dice_parser/parser_result.hpp"
 #include "variable_map.hpp"
 #include "dice_distribution.hpp"
+#include "builtin_func.hpp"
 #define YY_DECL calc::Parser::symbol_type calc::Scanner::lex()
 // workaround for bug in flex 2.6.4
 #define yypanic(X) (void)(X)
@@ -53,11 +54,15 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
 ">"               return calc::Parser::make_GREATER_THAN();
 "<"               return calc::Parser::make_LESS_THAN();
 "="               return calc::Parser::make_ASSIGN();
+","               return calc::Parser::make_COMMA();
 {stats}           return calc::Parser::make_STATS();
 [ \t\r\n]+        { /* skip whitespace */ }
 {variable}        {
                     std::string token{YYText()};
-                    // todo: check for built-in functions
+                    if(builtin::search_one_arg_func(token))
+                        return calc::Parser::make_FUNC_ONE_ARG(token);
+                    if(builtin::search_two_arg_func(token))
+                        return calc::Parser::make_FUNC_TWO_ARG(token);
                     if(var_map.check_num_variable(token))
                         return calc::Parser::make_NUM_VARIABLE(token);
                     if(var_map.check_dice_variable(token))

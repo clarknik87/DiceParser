@@ -32,6 +32,7 @@
 
 %code
 {
+    #include "builtin_func.hpp"
     #include "dice_distribution.hpp"
     #include "scanner.hpp"
     #define yylex(x) scanner->lex(x)
@@ -42,6 +43,8 @@
 %token <std::string>          DICE_VARIABLE
 %token <std::string>          NUM_VARIABLE
 %token <std::string>          NEW_VARIABLE
+%token <std::string>          FUNC_ONE_ARG
+%token <std::string>          FUNC_TWO_ARG
 
 %nterm <double>               expr
 %nterm <DiceDistr>            dexpr
@@ -59,7 +62,9 @@
 %token                        GREATER_THAN
 %token                        LESS_THAN
 %token                        ASSIGN
+%token                        COMMA
 %token                        STATS
+
 
 %left                         PLUS MINUS
 %left                         MULTIPLY DIVIDE
@@ -101,6 +106,9 @@ expr:
 | expr MULTIPLY expr          { $$ = $1 * $3; }
 | expr DIVIDE   expr          { $$ = $1 / $3; }
 | LPAREN expr RPAREN          { $$ = $2; }
+| FUNC_ONE_ARG LPAREN expr RPAREN { $$ = builtin::call_one_arg_func($1,$3); }
+| FUNC_TWO_ARG LPAREN expr COMMA expr RPAREN { $$ = builtin::call_two_arg_func($1,$3, $5); }
+
 
 dexpr:
   DICE_T                      { $$ = $1; }

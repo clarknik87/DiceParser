@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cmath>
 #include <gtest/gtest.h>
 
 #include "dice_parser/dice_parser.hpp"
@@ -381,6 +382,63 @@ TEST(variable_map, update_dependencies)
         EXPECT_EQ(std::get<double>(parser.parse("C")), 12.0);
         EXPECT_EQ(std::get<double>(parser.parse("D")), 11.0);
     }
+}
+
+TEST(builtin, basics)
+{
+    std::vector<test_case_t> test_cases{
+        {"abs(-5)", 5.0},
+        {"abs(5)", 5.0},
+        {"abs(-5.4)", 5.4},
+        {"abs(4.2)", 4.2},
+        {"sqrt(4)", sqrt(4)},
+        {"sqrt(54.7)", sqrt(54.7)},
+        {"sqrt(100)", sqrt(100)},
+        {"sqrt(0.005678)", sqrt(0.005678)},
+        {"ceil(1.0)", 1},
+        {"ceil(1.1)", 2},
+        {"ceil(-1.1)", -1},
+        {"floor(1.0)", 1},
+        {"floor(1.1)", 1},
+        {"floor(1.9)", 1},
+        {"floor(-1.9)", -2},
+        {"trunc(1.0)", 1},
+        {"trunc(-1.1)", -1},
+        {"trunc(-1.9)", -1},
+        {"trunc(1.9)", 1},
+        {"trunc(1.1)", 1},
+        {"round(1.0)", 1},
+        {"round(1.1)", 1},
+        {"round(1.9)", 2},
+        {"round(-1.0)", -1},
+        {"round(-1.1)", -1},
+        {"round(-1.9)", -2},
+        {"pow(10,1)", 10},
+        {"pow(10,2)", 100},
+        {"pow(10,3)", 1000},
+    };
+
+    DiceParser parser;
+    for(auto test_case : test_cases)
+        EXPECT_EQ(std::get<double>(parser.parse(test_case.test_str)), test_case.ans);
+}
+
+TEST(variable_map, builtin_funcs)
+{
+    DiceParser parser(
+        {},
+        {
+            {"str_score", "9"},
+            {"dex_score", "17"},
+            {"con_score", "20"},
+            {"str", "floor((str_score-10)/2)"},
+            {"dex", "floor((dex_score-10)/2)"},
+            {"con", "floor((con_score-10)/2)"},
+        }        
+    );
+    EXPECT_EQ(std::get<double>(parser.parse("str")), -1);
+    EXPECT_EQ(std::get<double>(parser.parse("dex")), 3);
+    EXPECT_EQ(std::get<double>(parser.parse("con")), 5);
 }
 
 int main(int argc, char** argv)

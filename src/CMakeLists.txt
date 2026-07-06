@@ -19,6 +19,7 @@ ADD_FLEX_BISON_DEPENDENCY(flex_scanner bison_parser)
 add_library(dice_parser STATIC
     ${FLEX_flex_scanner_OUTPUTS}
     ${BISON_bison_parser_OUTPUTS}
+    builtin_func.cpp
     dice_pdf.cpp
     dice_distribution.cpp
     dice_parser.cpp
