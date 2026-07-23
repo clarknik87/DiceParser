@@ -1,0 +1,13 @@
+#ifndef VERSION_HPP_GUARD
+#define VERSION_HPP_GUARD
+
+#include <string_view>
+
+namespace VersionInfo {
+    constexpr std::string_view VERSION = "@PROJECT_VERSION@";
+    constexpr int MAJOR = @PROJECT_VERSION_MAJOR@; //defined by Cmake
+    constexpr int MINOR = @PROJECT_VERSION_MINOR@; //defined by Cmake
+    constexpr int PATCH = @PROJECT_VERSION_PATCH@; //defined by Cmake
+}
+
+#endif//VERSION_HPP_GUARD

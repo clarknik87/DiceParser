@@ -3,6 +3,12 @@ find_package(FLEX REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+# pass project version defined at top level CMakeLists.txt 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/version.hpp.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/version.hpp"
+)
+
 BISON_TARGET(bison_parser
     ${CMAKE_CURRENT_SOURCE_DIR}/parser.yy
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
