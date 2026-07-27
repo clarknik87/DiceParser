@@ -13,7 +13,7 @@ function(get_commit_count)
     endif()
 
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags --always
+        COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE GIT_TAG
         OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -45,7 +45,7 @@ get_commit_count()
 set(PROJECT_VERSION_PATCH ${GIT_COMMIT_COUNT})
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/version.hpp.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/version.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/../version.hpp"
 )
 
 BISON_TARGET(bison_parser
