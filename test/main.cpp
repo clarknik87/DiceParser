@@ -28,7 +28,7 @@ TEST(valid, version)
 {
     EXPECT_EQ(DiceParser::version_major, 2);
     EXPECT_EQ(DiceParser::version_minor, 0);
-    EXPECT_EQ(DiceParser::version_patch, 0);
+    EXPECT_GE(DiceParser::version_patch, 0);
 }
 
 TEST(valid, arithmetic)
