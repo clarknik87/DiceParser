@@ -68,7 +68,8 @@ DicePDF operator+(double scalar, const DicePDF& rhs);
 DicePDF operator-(double scalar, const DicePDF& rhs);
 DicePDF operator*(double scalar, const DicePDF& rhs);
 
-// Multiple Dice Factory Methods
+// Dice Factory Methods
+DicePDF scalar_distribution(double value);
 DicePDF nds_distribution(int numdice, int numsides);
 DicePDF max_distribution(int numdice, int numsides);
 DicePDF min_distribution(int numdice, int numsides);

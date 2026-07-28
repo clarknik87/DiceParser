@@ -8,8 +8,18 @@
 
 DiceDistr::DiceDistr(std::string expr) : m_expr(expr)
 {
+    // integer scalar format
+    if(std::regex_match(expr, std::regex("^[0-9]+$")))
+    {
+        m_pdf = scalar_distribution(std::stoi(expr));
+    }
+    // double scalar format
+    else if(std::regex_match(expr, std::regex("^[0-9]+\\.[0-9]+$")))
+    {
+        m_pdf = scalar_distribution(std::stod(expr));
+    }
     // numdice and numsides format (nds)
-    if(std::regex_match(expr, std::regex("^[0-9]+d[0-9]+$")))
+    else if(std::regex_match(expr, std::regex("^[0-9]+d[0-9]+$")))
     {
         std::smatch match;
         std::regex_search(expr, match, std::regex("([0-9]+)d([0-9]+)"));

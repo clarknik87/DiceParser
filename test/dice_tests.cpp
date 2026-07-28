@@ -10,6 +10,18 @@
 TEST(DiceDistr, valid_ctor)
 {
     std::vector<test_case_t> test_cases{
+        // integer scalars
+        {"1", 1.0},
+        {"2", 2.0},
+        {"20", 20.0},
+        {"100", 100.0},
+        {"0", 0.0},
+        // double scalars
+        {"1.0", 1.0},
+        {"1.5", 1.5},
+        {"0.3", 0.3},
+        {"15.4", 15.4},
+        {"0.0", 0.0},
         // NdS format
         {"1d1", 1.0},
         {"2d1", 2.0},

@@ -38,8 +38,8 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
 {dice_min_s}      return calc::Parser::make_DICE_T(DiceDistr(YYText()));
 {dice_max_c}      return calc::Parser::make_DICE_T(DiceDistr(YYText()));
 {dice_min_c}      return calc::Parser::make_DICE_T(DiceDistr(YYText()));
-{int_t}           return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
-{double_t}        return calc::Parser::make_DOUBLE_T(strtod(YYText(), nullptr));
+{int_t}           return calc::Parser::make_DICE_T(DiceDistr(YYText()));
+{double_t}        return calc::Parser::make_DICE_T(DiceDistr(YYText()));
 "+"               return calc::Parser::make_PLUS();
 "-"               return calc::Parser::make_MINUS();
 "*"               return calc::Parser::make_MULTIPLY();

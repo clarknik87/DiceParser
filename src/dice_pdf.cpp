@@ -254,8 +254,13 @@ double DicePDF::roll() const
 }
 
 /**
- * MULTIPLE DICE FACTORY METHODS
+ * DICE FACTORY METHODS
  */
+DicePDF scalar_distribution(double value)
+{
+    return value*DicePDF(1); // equivalent to "value"d1 distr.
+}
+
 DicePDF nds_distribution(int numdice, int numsides)
 {
     DicePDF ret_dice(numsides);
