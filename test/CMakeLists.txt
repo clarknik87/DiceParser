@@ -7,8 +7,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(unit_tests 
+add_executable(unit_tests
+    dice_tests.cpp
     main.cpp
+)
+
+target_include_directories(unit_tests PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(unit_tests PRIVATE 

@@ -1,4 +1,5 @@
 #include "dice_distribution.hpp"
+#include "dice_parser/action_code.hpp"
 
 #include <regex>
 #include <stdexcept>
@@ -14,7 +15,7 @@ DiceDistr::DiceDistr(std::string expr) : m_expr(expr)
         std::regex_search(expr, match, std::regex("([0-9]+)d([0-9]+)"));
         int numdice = std::stoi(match[1]);
         int numsides = std::stoi(match[2]);
-        if(numdice <= 0 || numsides <= 0) throw std::invalid_argument(expr);
+        if(numdice <= 0 || numsides <= 0) throw action_code::invalid_formula;
         m_pdf = nds_distribution(numdice, numsides);
     }
     // advantage (adv)
@@ -34,7 +35,7 @@ DiceDistr::DiceDistr(std::string expr) : m_expr(expr)
         std::regex_search(expr, match, std::regex("([0-9]+)d([0-9]+)"));
         int numdice = std::stoi(match[1]);
         int numsides = std::stoi(match[2]);
-        if(numdice <= 0 || numsides <= 0) throw std::invalid_argument(expr);
+        if(numdice <= 0 || numsides <= 0) throw action_code::invalid_formula;
         m_pdf = min_distribution(numdice, numsides);
     }
     // max(nds) format
@@ -44,7 +45,7 @@ DiceDistr::DiceDistr(std::string expr) : m_expr(expr)
         std::regex_search(expr, match, std::regex("([0-9]+)d([0-9]+)"));
         int numdice = std::stoi(match[1]);
         int numsides = std::stoi(match[2]);
-        if(numdice <= 0 || numsides <= 0) throw std::invalid_argument(expr);
+        if(numdice <= 0 || numsides <= 0) throw action_code::invalid_formula;
         m_pdf = max_distribution(numdice, numsides);
     }
     // min(3,4d6) format
@@ -55,7 +56,7 @@ DiceDistr::DiceDistr(std::string expr) : m_expr(expr)
         int numdice = std::stoi(match[1]);
         int totaldice = std::stoi(match[2]);
         int numsides = std::stoi(match[3]);
-        if(numdice <= 0 || numsides <= 0 || totaldice <= 0) throw std::invalid_argument(expr);
+        if(numdice <= 0 || numsides <= 0 || totaldice <= 0 || numdice > totaldice) throw action_code::invalid_formula;
         m_pdf = compound_min_distribution(numdice, totaldice, numsides);
     }
     // max(3,4d6) format
@@ -66,12 +67,12 @@ DiceDistr::DiceDistr(std::string expr) : m_expr(expr)
         int numdice = std::stoi(match[1]);
         int totaldice = std::stoi(match[2]);
         int numsides = std::stoi(match[3]);
-        if(numdice <= 0 || numsides <= 0 || totaldice <= 0) throw std::invalid_argument(expr);
+        if(numdice <= 0 || numsides <= 0 || totaldice <= 0 || numdice > totaldice) throw action_code::invalid_formula;
         m_pdf = compound_max_distribution(numdice, totaldice, numsides);
     }
     else
     {
-        throw std::invalid_argument(expr);
+        throw action_code::invalid_formula;
     }
 };
 

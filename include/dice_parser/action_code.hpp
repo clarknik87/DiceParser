@@ -7,6 +7,7 @@ enum class action_code
 {
     action_success,
     unknown_symbol,
+    invalid_formula,
     invalid_syntax,
     variable_undefined,
     constant_undefined,
