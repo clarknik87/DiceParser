@@ -32,6 +32,7 @@ add_library(dice_parser STATIC
     ${BISON_bison_parser_OUTPUTS}
     builtin_func.cpp
     dice_pdf.cpp
+    dice_pmf.cpp
     dice_distribution.cpp
     dice_parser.cpp
     variable_map.cpp

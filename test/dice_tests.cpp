@@ -97,3 +97,32 @@ TEST(DiceDistr, invalid_ctor)
         EXPECT_EQ(parse_ans, error_case.ans) << error_case.test_str;
     }
 }
+
+TEST(DiceDistr, dice_operators)
+{
+    std::vector<test_case_t> test_cases{
+        // unary plus
+        {"+1", 1.0},
+        {"+2d4", 5.0},
+        // unary minus
+        {"-1", -1.0},
+        {"-1d4", -2.5},
+        // addition
+        {"1d2 + 1", 2.5},
+        {"1d2 + 1d4", 4.0},
+        {"1d2 + 2d4", 6.5},
+        {"1.0 + 1d4", 3.5},
+        // subtraction
+        {"1d2 - 1", 0.5},
+        {"1d2 - 1d4", -1.0},
+        {"1d2 - 2d4", -3.5},
+        {"1.0 - 1d4", -1.5},
+    };
+
+    DiceParser parser;
+    for(auto test_case : test_cases)
+    {
+        auto parse_ans = std::get<DiceDistr>(parser.parse(test_case.test_str));
+        EXPECT_NEAR(parse_ans.expected_value(), test_case.ans, float_epsilon) << test_case.test_str;
+    }
+}

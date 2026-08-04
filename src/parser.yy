@@ -38,7 +38,6 @@
     #define yylex(x) scanner->lex(x)
 }
 
-%token <double>               DOUBLE_T
 %token <DiceDistr>            DICE_T
 %token <std::string>          DICE_VARIABLE
 %token <std::string>          NUM_VARIABLE
@@ -46,7 +45,6 @@
 %token <std::string>          FUNC_ONE_ARG
 %token <std::string>          FUNC_TWO_ARG
 
-%nterm <double>               expr
 %nterm <DiceDistr>            dexpr
 
 %token                        PLUS
@@ -72,40 +70,40 @@
 %%
 
 input:
-  expr                        { result = parse_result_t{$1}; }
-  | dexpr                     { result = parse_result_t{$1}; }
-  | NEW_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  | NUM_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  | DICE_VARIABLE ASSIGN expr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  | NUM_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  | dexpr EQUAL_TO expr       { result = parse_result_t{$1 == $3}; }
-  | dexpr NOT_EQUAL_TO expr   { result = parse_result_t{$1 != $3}; }
-  | dexpr GREATER_EQUA expr   { result = parse_result_t{$1 >= $3}; }
-  | dexpr LESS_EQUAL expr     { result = parse_result_t{$1 <= $3}; }
-  | dexpr GREATER_THAN expr   { result = parse_result_t{$1 > $3}; }
-  | dexpr LESS_THAN expr      { result = parse_result_t{$1 < $3}; }
-  | expr EQUAL_TO dexpr       { result = parse_result_t{$1 == $3}; }
-  | expr NOT_EQUAL_TO dexpr   { result = parse_result_t{$1 != $3}; }
-  | expr GREATER_EQUA dexpr   { result = parse_result_t{$1 >= $3}; }
-  | expr LESS_EQUAL dexpr     { result = parse_result_t{$1 <= $3}; }
-  | expr GREATER_THAN dexpr   { result = parse_result_t{$1 > $3}; }
-  | expr LESS_THAN dexpr      { result = parse_result_t{$1 < $3}; }
+  //  expr                        { result = parse_result_t{$1}; }
+  dexpr                       { result = parse_result_t{$1}; }
+  // | NEW_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  // | NUM_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  // | DICE_VARIABLE ASSIGN expr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  // | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  // | NUM_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  // | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  // | dexpr EQUAL_TO expr       { result = parse_result_t{$1 == $3}; }
+  // | dexpr NOT_EQUAL_TO expr   { result = parse_result_t{$1 != $3}; }
+  // | dexpr GREATER_EQUA expr   { result = parse_result_t{$1 >= $3}; }
+  // | dexpr LESS_EQUAL expr     { result = parse_result_t{$1 <= $3}; }
+  // | dexpr GREATER_THAN expr   { result = parse_result_t{$1 > $3}; }
+  // | dexpr LESS_THAN expr      { result = parse_result_t{$1 < $3}; }
+  // | expr EQUAL_TO dexpr       { result = parse_result_t{$1 == $3}; }
+  // | expr NOT_EQUAL_TO dexpr   { result = parse_result_t{$1 != $3}; }
+  // | expr GREATER_EQUA dexpr   { result = parse_result_t{$1 >= $3}; }
+  // | expr LESS_EQUAL dexpr     { result = parse_result_t{$1 <= $3}; }
+  // | expr GREATER_THAN dexpr   { result = parse_result_t{$1 > $3}; }
+  // | expr LESS_THAN dexpr      { result = parse_result_t{$1 < $3}; }
   ;
 
-expr:
-  DOUBLE_T                    { $$ = $1; }
-| NUM_VARIABLE                { $$ = var_map.get_num_variable($1); }
-| PLUS expr %prec UMINUS      { $$ = +$2; }
-| MINUS expr %prec UMINUS     { $$ = -$2; }
-| expr PLUS     expr          { $$ = $1 + $3; }
-| expr MINUS    expr          { $$ = $1 - $3; }
-| expr MULTIPLY expr          { $$ = $1 * $3; }
-| expr DIVIDE   expr          { $$ = $1 / $3; }
-| LPAREN expr RPAREN          { $$ = $2; }
-| FUNC_ONE_ARG LPAREN expr RPAREN { $$ = builtin::call_one_arg_func($1,$3); }
-| FUNC_TWO_ARG LPAREN expr COMMA expr RPAREN { $$ = builtin::call_two_arg_func($1,$3, $5); }
+// expr:
+//   DOUBLE_T                    { $$ = $1; }
+// | NUM_VARIABLE                { $$ = var_map.get_num_variable($1); }
+// | PLUS expr %prec UMINUS      { $$ = +$2; }
+// | MINUS expr %prec UMINUS     { $$ = -$2; }
+// | expr PLUS     expr          { $$ = $1 + $3; }
+// | expr MINUS    expr          { $$ = $1 - $3; }
+// | expr MULTIPLY expr          { $$ = $1 * $3; }
+// | expr DIVIDE   expr          { $$ = $1 / $3; }
+// | LPAREN expr RPAREN          { $$ = $2; }
+// | FUNC_ONE_ARG LPAREN expr RPAREN { $$ = builtin::call_one_arg_func($1,$3); }
+// | FUNC_TWO_ARG LPAREN expr COMMA expr RPAREN { $$ = builtin::call_two_arg_func($1,$3, $5); }
 
 
 dexpr:
@@ -115,12 +113,12 @@ dexpr:
 | MINUS dexpr %prec UMINUS    { $$ = -$2; }
 | dexpr PLUS     dexpr        { $$ = $1 + $3; }
 | dexpr MINUS    dexpr        { $$ = $1 - $3; }
-| dexpr PLUS     expr         { $$ = $1 + $3; }
-| dexpr MINUS    expr         { $$ = $1 - $3; }
-| dexpr MULTIPLY expr         { $$ = $1 * $3; }
-| expr PLUS     dexpr         { $$ = $1 + $3; }
-| expr MINUS    dexpr         { $$ = $1 - $3; }
-| expr MULTIPLY dexpr         { $$ = $1 * $3; }
+// | dexpr PLUS     expr         { $$ = $1 + $3; }
+// | dexpr MINUS    expr         { $$ = $1 - $3; }
+// | dexpr MULTIPLY expr         { $$ = $1 * $3; }
+// | expr PLUS     dexpr         { $$ = $1 + $3; }
+// | expr MINUS    dexpr         { $$ = $1 - $3; }
+// | expr MULTIPLY dexpr         { $$ = $1 * $3; }
 | LPAREN dexpr RPAREN         { $$ = $2; }
 
 %%
