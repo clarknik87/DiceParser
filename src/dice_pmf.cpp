@@ -121,10 +121,17 @@ DicePMF min_distr(int numdice, int numsides)
     return ret_dice;
 }
 
-static std::vector<std::vector<int>> accel_asc(int n)
+static std::vector<std::vector<int>> get_valid_integer_partitions(int n, int part_len, int max_val, int min_val)
 {
-    std::vector<std::vector<int>> result;
+    std::vector<std::vector<int>> partitions;
     std::vector<int> a(n + 1, 0);
+    auto is_valid_partition = [&a, part_len, max_val, min_val](int size){
+        return (size == part_len
+                && (*std::max_element(a.begin(), a.begin()+size) <= max_val)
+                && (*std::min_element(a.begin(), a.begin()+size) >= min_val)
+            );
+    };
+    // accel_asc alogorithm that excludes invalid partitions
     int k = 1;
     int y = n - 1;
     while (k != 0) {
@@ -139,28 +146,15 @@ static std::vector<std::vector<int>> accel_asc(int n)
         while (x <= y) {
             a[k] = x;
             a[l] = y;
-            result.emplace_back(a.begin(), a.begin() + k + 2);
+            if(is_valid_partition(k+2))
+                partitions.emplace_back(a.begin(), a.begin() + k + 2);
             x += 1;
             y -= 1;
         }
         a[k] = x + y;
         y = x + y - 1;
-        result.emplace_back(a.begin(), a.begin() + k + 1);
-    }
-    return result;
-}
-
-static std::vector<std::vector<int>> get_valid_integer_partitions(int n, int part_len, int max_val, int min_val)
-{
-    auto partitions = accel_asc(n);
-    for(auto it = partitions.cbegin(); it != partitions.cend(); )
-    {
-        if(it->size() != part_len ||
-          (*std::max_element(it->cbegin(), it->cend())) > max_val ||
-          (*std::min_element(it->cbegin(), it->cend())) < min_val)
-            it = partitions.erase(it);
-        else
-            ++it;
+        if(is_valid_partition(k+1))
+            partitions.emplace_back(a.begin(), a.begin() + k + 1);
     }
     return partitions;
 }
