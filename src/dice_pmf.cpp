@@ -1,3 +1,5 @@
+#include <cmath>
+#include <iostream>
 #include <iomanip>
 #include "dice_pmf.hpp"
 
@@ -86,6 +88,34 @@ DicePMF nds_distr(int numdice, int numsides)
     DicePMF ret_dice(numsides);
     for(int i=0; i<numdice-1; ++i)
         ret_dice = ret_dice + DicePMF(numsides);
+    return ret_dice;
+}
+
+DicePMF max_distr(int numdice, int numsides)
+{
+    DicePMF ret_dice(numsides);
+    double px = 0.0;
+    double pxprev = 0.0;
+    for(int i=1; i<=numsides; ++i)
+    {
+        px = std::pow(i, numdice)-pxprev;
+        ret_dice.pmf.at(static_cast<double>(i)) = px/std::pow(numsides, numdice);
+        pxprev += px;
+    }
+    return ret_dice;
+}
+
+DicePMF min_distr(int numdice, int numsides)
+{
+    DicePMF ret_dice(numsides);
+    double px = 0.0;
+    double pxprev = std::pow(numsides, numdice);
+    for(int i=numsides-1; i>=0; --i)
+    {
+        px = std::pow(i, numdice)-pxprev;
+        ret_dice.pmf.at(static_cast<double>(numsides-i)) = -px/std::pow(numsides, numdice);
+        pxprev += px;
+    }
     return ret_dice;
 }
 

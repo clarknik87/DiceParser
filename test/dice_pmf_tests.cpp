@@ -30,5 +30,16 @@ TEST(DicePMF, valid_ctor)
     EXPECT_NEAR(nds_distr(2,6).get_pmf().at(2.0), 0.0278, float_epsilon);
     EXPECT_NEAR(nds_distr(2,8).get_pmf().at(2.0), 0.0156, float_epsilon);
 
+    // max ctor
+    EXPECT_NEAR(max_distr(2,2).get_pmf().at(1.0), 0.25, float_epsilon);
+    EXPECT_NEAR(max_distr(2,4).get_pmf().at(1.0), 0.0625, float_epsilon);
+    EXPECT_NEAR(max_distr(2,6).get_pmf().at(1.0), 0.0278, float_epsilon);
+    EXPECT_NEAR(max_distr(2,20).get_pmf().at(1.0), 0.0025, float_epsilon);
+
+    // min ctor
+    EXPECT_NEAR(min_distr(2,2).get_pmf().at(2.0), 0.25, float_epsilon);
+    EXPECT_NEAR(min_distr(2,4).get_pmf().at(4.0), 0.0625, float_epsilon);
+    EXPECT_NEAR(min_distr(2,6).get_pmf().at(6.0), 0.0278, float_epsilon);
+    EXPECT_NEAR(min_distr(2,20).get_pmf().at(20.0), 0.0025, float_epsilon);
     return;
 }

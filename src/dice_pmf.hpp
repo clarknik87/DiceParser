@@ -28,6 +28,11 @@ public:
     DicePMF(int numsides);
     explicit DicePMF(const std::map<double,double>& m);
 
+    friend DicePMF scalar_distr(double value);
+    friend DicePMF nds_distr(int numdice, int numsides);
+    friend DicePMF max_distr(int numdice, int numsides);
+    friend DicePMF min_distr(int numdice, int numsides);
+
     // Arithmetic Operator overloads
     DicePMF merge(const DicePMF& other, merge_op op) const;
     DicePMF operator+(const DicePMF& rhs) const;
@@ -47,8 +52,8 @@ public:
 // Dice Factory Methods
 DicePMF scalar_distr(double value);
 DicePMF nds_distr(int numdice, int numsides);
-// DicePMF max_distribution(int numdice, int numsides);
-// DicePMF min_distribution(int numdice, int numsides);
+DicePMF max_distr(int numdice, int numsides);
+DicePMF min_distr(int numdice, int numsides);
 // DicePMF compound_max_distribution(int numdice, int totaldice, int numsides);
 // DicePMF compound_min_distribution(int numdice, int totaldice, int numsides);
 
