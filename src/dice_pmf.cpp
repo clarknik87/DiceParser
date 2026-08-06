@@ -102,12 +102,12 @@ const std::map<double,double>& DicePMF::get_pmf()
     return pmf;
 }
 
-auto DicePMF::rolls_iter() const
+auto DicePMF::rolls_view() const
 {
     return std::views::keys(pmf);
 }
 
-auto DicePMF::probs_iter() const
+auto DicePMF::probs_view() const
 {
     return std::views::values(pmf);
 }
@@ -274,10 +274,10 @@ std::ostream& operator<< (std::ostream& stream, const DicePMF& pmf)
 {
     stream << std::setprecision(4);
     stream << "[";
-    for(auto p : pmf.probs_iter())
+    for(auto p : pmf.probs_view())
         stream << std::setw(8) << p;
     stream << "]\r\n[";
-    for(auto r : pmf.rolls_iter())
+    for(auto r : pmf.rolls_view())
         stream << std::setw(8) << r;
     stream << "]";
     return stream;

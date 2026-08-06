@@ -50,8 +50,8 @@ public:
 
     // Element Access
     const std::map<double,double>& get_pmf();
-    auto rolls_iter() const;
-    auto probs_iter() const;
+    auto rolls_view() const;
+    auto probs_view() const;
 
     // Debug/Utility functions
     friend std::ostream& operator<< (std::ostream& stream, const DicePMF& pmf);
