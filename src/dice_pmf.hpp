@@ -7,12 +7,12 @@
 /**
  * A DicePDF stores the probability density function of a dice formula. Though
  * stored internally as a std::map, the roll (key) and probability (value)
- * pairs can be conceptualized as a 2d matrix. The second row stors the roll
- * value, the first row stores the asscoiated probability. A standard d4 can
+ * pairs can be conceptualized as a 2d matrix. The second row stores the roll
+ * value, the first row stores the associated probability. A standard d4 can
  * be visualized as:
  *
- *          [[0.25 0.25 0.25 0.25],
- *           [1    2    3    4]]
+ *      values ->   [[0.25 0.25 0.25 0.25],
+ *      keys ->      [1    2    3    4]]
  */
 class DicePMF
 {
@@ -32,6 +32,9 @@ public:
     friend DicePMF nds_distr(int numdice, int numsides);
     friend DicePMF max_distr(int numdice, int numsides);
     friend DicePMF min_distr(int numdice, int numsides);
+    friend DicePMF compound_distr(int numdice, int totaldice, int numsides, bool is_max);
+    friend DicePMF compound_max_distr(int numdice, int totaldice, int numsides);
+    friend DicePMF compound_min_distr(int numdice, int totaldice, int numsides);
 
     // Arithmetic Operator overloads
     DicePMF merge(const DicePMF& other, merge_op op) const;
@@ -54,7 +57,7 @@ DicePMF scalar_distr(double value);
 DicePMF nds_distr(int numdice, int numsides);
 DicePMF max_distr(int numdice, int numsides);
 DicePMF min_distr(int numdice, int numsides);
-// DicePMF compound_max_distribution(int numdice, int totaldice, int numsides);
-// DicePMF compound_min_distribution(int numdice, int totaldice, int numsides);
+DicePMF compound_max_distr(int numdice, int totaldice, int numsides);
+DicePMF compound_min_distr(int numdice, int totaldice, int numsides);
 
 #endif//DICE_PMF_HPP_GUARD

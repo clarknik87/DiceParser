@@ -1,6 +1,8 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <vector>
+#include <algorithm>
 #include "dice_pmf.hpp"
 
 /**
@@ -117,6 +119,123 @@ DicePMF min_distr(int numdice, int numsides)
         pxprev += px;
     }
     return ret_dice;
+}
+
+static std::vector<std::vector<int>> accel_asc(int n)
+{
+    std::vector<std::vector<int>> result;
+    std::vector<int> a(n + 1, 0);
+    int k = 1;
+    int y = n - 1;
+    while (k != 0) {
+        int x = a[k - 1] + 1;
+        k -= 1;
+        while (2 * x <= y) {
+            a[k] = x;
+            y -= x;
+            k += 1;
+        }
+        int l = k + 1;
+        while (x <= y) {
+            a[k] = x;
+            a[l] = y;
+            result.emplace_back(a.begin(), a.begin() + k + 2);
+            x += 1;
+            y -= 1;
+        }
+        a[k] = x + y;
+        y = x + y - 1;
+        result.emplace_back(a.begin(), a.begin() + k + 1);
+    }
+    return result;
+}
+
+static std::vector<std::vector<int>> get_valid_integer_partitions(int n, int part_len, int max_val, int min_val)
+{
+    auto partitions = accel_asc(n);
+    for(auto it = partitions.cbegin(); it != partitions.cend(); )
+    {
+        if(it->size() != part_len ||
+          (*std::max_element(it->cbegin(), it->cend())) > max_val ||
+          (*std::min_element(it->cbegin(), it->cend())) < min_val)
+            it = partitions.erase(it);
+        else
+            ++it;
+    }
+    return partitions;
+}
+
+static void extend_partition(std::vector<int> partition, std::vector<std::vector<int>>& roll_list, int totaldice, int numsides, bool is_max)
+{
+    if(partition.size() == totaldice)
+    {
+        roll_list.push_back(partition);
+    }
+    else
+    {
+        if(is_max)
+        {
+            for(int s=1; s<=(*std::min_element(partition.cbegin(), partition.cend())); ++s)
+            {
+                auto new_partition = partition;
+                new_partition.push_back(s);
+                extend_partition(new_partition, roll_list, totaldice, numsides, is_max);
+            }
+        }
+        else
+        {
+            for(int s=(*std::max_element(partition.cbegin(), partition.cend())); s<=numsides; ++s)
+            {
+                auto new_partition = partition;
+                new_partition.push_back(s);
+                extend_partition(new_partition, roll_list, totaldice, numsides, is_max);
+            }
+        }
+    }
+}
+
+static long int factorial(int n)
+{
+    long f = 1;
+    for(int i=1; i<=n; ++i)
+        f*=i;
+    return f;
+}
+
+DicePMF compound_distr(int numdice, int totaldice, int numsides, bool is_max)
+{
+    auto pmf = nds_distr(numdice, numsides).pmf;
+    for(auto& [roll,prob] : pmf)
+    {
+        double total_permutations = 0.0;
+        std::vector<std::vector<int>> roll_list;
+        auto int_partitions = get_valid_integer_partitions(roll, numdice, numsides, 1);
+        for(auto partition : int_partitions)
+        {
+            std::vector<std::vector<int>> temp_list;
+            extend_partition(partition, temp_list, totaldice, numsides, is_max);
+            roll_list.insert(roll_list.end(), temp_list.begin(), temp_list.end());
+        }
+        for(auto roll_i : roll_list)
+        {
+            int product = 1;
+            for(int d=1; d<= numsides; ++d)
+                product *= factorial(std::count(roll_i.cbegin(), roll_i.cend(), d));
+            total_permutations += factorial(totaldice)/static_cast<double>(product);
+        }
+        prob = static_cast<double>(total_permutations)/std::pow(numsides, totaldice);
+    }
+    return DicePMF(pmf);
+}
+
+DicePMF compound_max_distr(int numdice, int totaldice, int numsides)
+{
+    return compound_distr(numdice, totaldice, numsides, true);
+}
+
+DicePMF compound_min_distr(int numdice, int totaldice, int numsides)
+{
+    return compound_distr(numdice, totaldice, numsides, false);
 }
 
 /**
