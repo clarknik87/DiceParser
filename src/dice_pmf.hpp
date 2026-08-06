@@ -42,6 +42,11 @@ public:
     DicePMF operator*(double scalar) const;
 
     // Stats functions
+    double minimum() const;
+    double maximum() const;
+    double expected_value() const;
+    double variance() const;
+    double standard_dev() const;
 
     // Element Access
     const std::map<double,double>& get_pmf();

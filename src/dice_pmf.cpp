@@ -60,6 +60,41 @@ DicePMF DicePMF::operator*(double scalar) const
 }
 
 /**
+ * STATISTICS FUNCTIONS
+ */
+double DicePMF::minimum() const
+{
+    return pmf.cbegin()->first;
+}
+
+double DicePMF::maximum() const
+{
+    return (--pmf.cend())->first;
+}
+
+double DicePMF::expected_value() const
+{
+    double ev = 0.0;
+    for(const auto& [roll, prob] : pmf)
+        ev += prob*roll;
+    return ev;
+}
+
+double DicePMF::variance() const
+{
+    const double ev = expected_value();
+    double var = 0.0;
+    for(const auto& [roll, prob] : pmf)
+        var += prob*std::pow(ev - roll, 2);
+    return var;
+}
+
+double DicePMF::standard_dev() const
+{
+    return std::sqrt(variance());
+}
+
+/**
  * ELEMENT ACCESS
  */
 const std::map<double,double>& DicePMF::get_pmf()
