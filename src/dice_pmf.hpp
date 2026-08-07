@@ -53,6 +53,9 @@ public:
     auto rolls_view() const;
     auto probs_view() const;
 
+    // Random selection
+    double roll() const;
+
     // Debug/Utility functions
     friend std::ostream& operator<< (std::ostream& stream, const DicePMF& pmf);
 };

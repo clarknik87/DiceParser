@@ -87,3 +87,86 @@ TEST(DicePMF, stats)
     EXPECT_NEAR(nds_distr(4,6).standard_dev(), 3.4157, float_epsilon);
     EXPECT_NEAR(nds_distr(5,8).standard_dev(), 5.1235, float_epsilon);
 }
+
+TEST(DicePMF, roll)
+{
+    auto chi_square_test_distr = [](DicePMF d){
+        // Chi Square Table Column for p=0.05
+        // each entry corresponds to a degree 
+        // of freedom, 1, 2, 3, ...
+        const double chi_table[] = {
+            5.0240,
+            7.3780,
+            9.3480,
+            11.143,
+            12.833,
+            14.449,
+            16.013,
+            17.535,
+            19.023,
+            20.483,
+            21.920,
+            23.337,
+            24.736,
+            26.119,
+            27.488,
+            28.845,
+            30.191,
+            31.526,
+            32.852,
+            34.170,
+            35.479,
+            36.781,
+            38.076,
+            39.364,
+            40.646,
+            41.923,
+            43.195,
+            44.461,
+            45.722,
+            46.979,
+        };
+        constexpr int total_rolls = 100000;
+        std::map<double, int> observed;
+        for(int i=0; i<total_rolls; ++i)
+        {
+            double r = d.roll();
+            observed[r] += 1;
+        }
+
+        int df = d.get_pmf().size()-1; //degrees of freedom
+        ASSERT_GT(df, 0);
+        ASSERT_LT(df, sizeof(chi_table)/sizeof(double));
+        double chi_squared = 0.0;
+        for(const auto& [roll,prob] : d.get_pmf())
+        {
+            if(observed.contains(roll))
+                chi_squared += std::pow(observed[roll]-(prob*total_rolls),2)/(prob*total_rolls);
+            else
+                chi_squared += std::pow(0.0-(prob*total_rolls),2)/(prob*total_rolls);
+        }
+        EXPECT_LE(chi_squared, chi_table[df-1]) << df;
+    };
+
+    // single die
+    chi_square_test_distr(DicePMF(2));
+    chi_square_test_distr(DicePMF(4));
+    chi_square_test_distr(DicePMF(6));
+    chi_square_test_distr(DicePMF(8));
+    chi_square_test_distr(DicePMF(10));
+    chi_square_test_distr(DicePMF(12));
+    chi_square_test_distr(DicePMF(20));
+
+    // nds
+    chi_square_test_distr(nds_distr(2,2));
+    chi_square_test_distr(nds_distr(2,6));
+    chi_square_test_distr(nds_distr(3,8));
+
+    // min/max
+    chi_square_test_distr(max_distr(2,6));
+    chi_square_test_distr(min_distr(2,6));
+
+    // compound ctor
+    chi_square_test_distr(compound_max_distr(2,3,6));
+    chi_square_test_distr(compound_min_distr(2,3,6));
+}

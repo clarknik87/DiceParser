@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <vector>
 #include <algorithm>
+#include <random>
 #include "dice_pmf.hpp"
 
 /**
@@ -110,6 +111,26 @@ auto DicePMF::rolls_view() const
 auto DicePMF::probs_view() const
 {
     return std::views::values(pmf);
+}
+
+/**
+ * RANDOM SELECTION
+ */
+static std::random_device rd;
+static std::mt19937 rand_gen(rd());
+
+double DicePMF::roll() const
+{
+    std::uniform_real_distribution<> distr(0.0, 1.0);
+    double rn = distr(rand_gen);
+    double total = 0.0;
+    for(const auto& [roll, prob] : pmf)
+    {
+        total += prob;
+        if(total >= rn)
+            return roll;
+    }
+    return 0.0;
 }
 
 /**
