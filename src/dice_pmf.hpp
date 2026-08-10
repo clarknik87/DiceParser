@@ -17,7 +17,11 @@
 class DicePMF
 {
 private:
-    enum class merge_op{
+    enum class unary_op{
+        plus,
+        minus
+    };
+    enum class binary_op{
         add,
         sub,
         mul,
@@ -47,7 +51,8 @@ public:
     DicePMF operator*(double rhs) const;
     DicePMF operator/(double rhs) const;
 
-    DicePMF merge(const DicePMF& other, merge_op op) const;
+    DicePMF unary_operate(unary_op op) const;
+    DicePMF binary_operate(const DicePMF& other, binary_op op) const;
     DicePMF operator+(const DicePMF& rhs) const;
     DicePMF operator-(const DicePMF& rhs) const;
     DicePMF operator*(const DicePMF& rhs) const;

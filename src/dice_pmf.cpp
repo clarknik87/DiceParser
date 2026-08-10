@@ -25,15 +25,12 @@ DicePMF::DicePMF(const std::map<double,double>& m) : pmf(m)
  */
 DicePMF DicePMF::operator+() const
 {
-    return *this;
+    return unary_operate(unary_op::plus);
 }
 
 DicePMF DicePMF::operator-() const
 {
-    DicePMF d;
-    for(const auto& [roll,prob] : pmf)
-        d.pmf[-1*roll] = prob;
-    return d;
+    return unary_operate(unary_op::minus);
 }
 
 DicePMF DicePMF::operator+(double rhs) const
@@ -86,15 +83,31 @@ DicePMF operator/(double lhs, const DicePMF& rhs)
     return DicePMF(lhs)/rhs;
 }
 
-DicePMF DicePMF::merge(const DicePMF& other, merge_op op) const
+DicePMF DicePMF::unary_operate(unary_op op) const
+{
+    // Operator look up table
+    using one_arg_func_ptr = double (*)(double);
+    std::map<unary_op, one_arg_func_ptr> func_lut{
+        {unary_op::plus, [](double a){return a;}},
+        {unary_op::minus, [](double a){return -a;}},
+    };
+
+    //Operate elementwise across the roll "vector"
+    DicePMF d;
+    for(const auto& [roll,prob] : pmf)
+        d.pmf[func_lut[op](roll)] = prob;
+    return d;
+}
+
+DicePMF DicePMF::binary_operate(const DicePMF& other, binary_op op) const
 {
     // Operator look up table
     using two_arg_func_ptr = double (*)(double, double);
-    std::map<merge_op, two_arg_func_ptr> func_lut{
-        {merge_op::add, [](double a, double b){return a+b;}},
-        {merge_op::sub, [](double a, double b){return a-b;}},
-        {merge_op::mul, [](double a, double b){return a*b;}},
-        {merge_op::div, [](double a, double b){return a/b;}},
+    std::map<binary_op, two_arg_func_ptr> func_lut{
+        {binary_op::add, [](double a, double b){return a+b;}},
+        {binary_op::sub, [](double a, double b){return a-b;}},
+        {binary_op::mul, [](double a, double b){return a*b;}},
+        {binary_op::div, [](double a, double b){return a/b;}},
     };
 
     // Operate and sum probabilites
@@ -115,22 +128,22 @@ DicePMF DicePMF::merge(const DicePMF& other, merge_op op) const
 
 DicePMF DicePMF::operator+(const DicePMF& rhs) const
 {
-    return merge(rhs, merge_op::add);
+    return binary_operate(rhs, binary_op::add);
 }
 
 DicePMF DicePMF::operator-(const DicePMF& rhs) const
 {
-    return merge(rhs, merge_op::sub);
+    return binary_operate(rhs, binary_op::sub);
 }
 
 DicePMF DicePMF::operator*(const DicePMF& rhs) const
 {
-    return merge(rhs, merge_op::mul);
+    return binary_operate(rhs, binary_op::mul);
 }
 
 DicePMF DicePMF::operator/(const DicePMF& rhs) const
 {
-    return merge(rhs, merge_op::div);
+    return binary_operate(rhs, binary_op::div);
 }
 
 /**

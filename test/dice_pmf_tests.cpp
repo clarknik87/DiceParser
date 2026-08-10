@@ -175,6 +175,10 @@ TEST(DicePMF, roll)
 
 TEST(DIcePMF, arithmetic)
 {
+    // unary operations
+    EXPECT_NEAR((+DicePMF(1)).expected_value(), 1, float_epsilon);
+    EXPECT_NEAR((-DicePMF(1)).expected_value(), -1, float_epsilon);
+
     // scalar arithmetic
     EXPECT_NEAR((DicePMF(1)+1).expected_value(), 2, float_epsilon);
     EXPECT_NEAR((DicePMF(1)-1).expected_value(), 0, float_epsilon);
