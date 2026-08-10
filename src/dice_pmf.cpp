@@ -23,12 +23,78 @@ DicePMF::DicePMF(const std::map<double,double>& m) : pmf(m)
 /**
  * ARITHMETIC OPERATOR OVERLOADS
  */
+DicePMF DicePMF::operator+() const
+{
+    return *this;
+}
+
+DicePMF DicePMF::operator-() const
+{
+    DicePMF d;
+    for(const auto& [roll,prob] : pmf)
+        d.pmf[-1*roll] = prob;
+    return d;
+}
+
+DicePMF DicePMF::operator+(double rhs) const
+{
+    DicePMF d;
+    for(const auto& [roll,prob] : pmf)
+        d.pmf[roll+rhs] = prob;
+    return d;
+}
+
+DicePMF operator+(double lhs, const DicePMF& rhs) {
+    return rhs+lhs;
+}
+
+DicePMF DicePMF::operator-(double rhs) const
+{
+    DicePMF d;
+    for(const auto& [roll,prob] : pmf)
+        d.pmf[roll-rhs] = prob;
+    return d;
+}
+DicePMF operator-(double lhs, const DicePMF& rhs)
+{
+    return (-rhs)+lhs;
+}
+
+DicePMF DicePMF::operator*(double rhs) const
+{
+    DicePMF d;
+    for(const auto& [roll,prob] : pmf)
+        d.pmf[roll*rhs] = prob;
+    return d;
+}
+
+DicePMF operator*(double lhs, const DicePMF& rhs)
+{
+    return rhs*lhs;
+}
+
+DicePMF DicePMF::operator/(double rhs) const
+{
+    DicePMF d;
+    for(const auto& [roll,prob] : pmf)
+        d.pmf[roll/rhs] = prob;
+    return d;
+}
+
+DicePMF operator/(double lhs, const DicePMF& rhs)
+{
+    return DicePMF(lhs)/rhs;
+}
+
 DicePMF DicePMF::merge(const DicePMF& other, merge_op op) const
 {
     // Operator look up table
     using two_arg_func_ptr = double (*)(double, double);
     std::map<merge_op, two_arg_func_ptr> func_lut{
         {merge_op::add, [](double a, double b){return a+b;}},
+        {merge_op::sub, [](double a, double b){return a-b;}},
+        {merge_op::mul, [](double a, double b){return a*b;}},
+        {merge_op::div, [](double a, double b){return a/b;}},
     };
 
     // Operate and sum probabilites
@@ -52,12 +118,19 @@ DicePMF DicePMF::operator+(const DicePMF& rhs) const
     return merge(rhs, merge_op::add);
 }
 
-DicePMF DicePMF::operator*(double scalar) const
+DicePMF DicePMF::operator-(const DicePMF& rhs) const
 {
-    DicePMF d;
-    for(const auto& [roll,prob] : pmf)
-        d.pmf[scalar*roll] = prob;
-    return d;
+    return merge(rhs, merge_op::sub);
+}
+
+DicePMF DicePMF::operator*(const DicePMF& rhs) const
+{
+    return merge(rhs, merge_op::mul);
+}
+
+DicePMF DicePMF::operator/(const DicePMF& rhs) const
+{
+    return merge(rhs, merge_op::div);
 }
 
 /**

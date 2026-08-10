@@ -19,6 +19,9 @@ class DicePMF
 private:
     enum class merge_op{
         add,
+        sub,
+        mul,
+        div
     };
 
     std::map<double,double> pmf;
@@ -37,9 +40,19 @@ public:
     friend DicePMF compound_min_distr(int numdice, int totaldice, int numsides);
 
     // Arithmetic Operator overloads
+    DicePMF operator+() const;
+    DicePMF operator-() const;
+    DicePMF operator+(double rhs) const;
+    DicePMF operator-(double rhs) const;
+    DicePMF operator*(double rhs) const;
+    DicePMF operator/(double rhs) const;
+
     DicePMF merge(const DicePMF& other, merge_op op) const;
     DicePMF operator+(const DicePMF& rhs) const;
-    DicePMF operator*(double scalar) const;
+    DicePMF operator-(const DicePMF& rhs) const;
+    DicePMF operator*(const DicePMF& rhs) const;
+    DicePMF operator/(const DicePMF& rhs) const;
+    
 
     // Stats functions
     double minimum() const;
@@ -59,6 +72,12 @@ public:
     // Debug/Utility functions
     friend std::ostream& operator<< (std::ostream& stream, const DicePMF& pmf);
 };
+
+// Arithmetic Operator overloads
+DicePMF operator+(double lhs, const DicePMF& rhs);
+DicePMF operator-(double lhs, const DicePMF& rhs);
+DicePMF operator*(double lhs, const DicePMF& rhs);
+DicePMF operator/(double lhs, const DicePMF& rhs);
 
 // Dice Factory Methods
 DicePMF scalar_distr(double value);

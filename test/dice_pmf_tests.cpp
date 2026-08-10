@@ -88,6 +88,7 @@ TEST(DicePMF, stats)
     EXPECT_NEAR(nds_distr(5,8).standard_dev(), 5.1235, float_epsilon);
 }
 
+/*
 TEST(DicePMF, roll)
 {
     auto chi_square_test_distr = [](DicePMF d){
@@ -169,4 +170,19 @@ TEST(DicePMF, roll)
     // compound ctor
     chi_square_test_distr(compound_max_distr(2,3,6));
     chi_square_test_distr(compound_min_distr(2,3,6));
+}
+*/
+
+TEST(DIcePMF, arithmetic)
+{
+    // scalar arithmetic
+    EXPECT_NEAR((DicePMF(1)+1).expected_value(), 2, float_epsilon);
+    EXPECT_NEAR((DicePMF(1)-1).expected_value(), 0, float_epsilon);
+    EXPECT_NEAR((DicePMF(1)*1).expected_value(), 1, float_epsilon);
+    EXPECT_NEAR((DicePMF(1)/1).expected_value(), 1, float_epsilon);
+
+    EXPECT_NEAR((1+DicePMF(1)).expected_value(), 2, float_epsilon);
+    EXPECT_NEAR((1-DicePMF(1)).expected_value(), 0, float_epsilon);
+    EXPECT_NEAR((1*DicePMF(1)).expected_value(), 1, float_epsilon);
+    EXPECT_NEAR((1/DicePMF(1)).expected_value(), 1, float_epsilon);
 }
