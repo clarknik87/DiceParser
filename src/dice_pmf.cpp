@@ -23,65 +23,6 @@ DicePMF::DicePMF(const std::map<double,double>& m) : pmf(m)
 /**
  * ARITHMETIC OPERATOR OVERLOADS
  */
-DicePMF DicePMF::operator+() const
-{
-    return unary_operate(unary_op::plus);
-}
-
-DicePMF DicePMF::operator-() const
-{
-    return unary_operate(unary_op::minus);
-}
-
-DicePMF DicePMF::operator+(double rhs) const
-{
-    DicePMF d;
-    for(const auto& [roll,prob] : pmf)
-        d.pmf[roll+rhs] = prob;
-    return d;
-}
-
-DicePMF operator+(double lhs, const DicePMF& rhs) {
-    return rhs+lhs;
-}
-
-DicePMF DicePMF::operator-(double rhs) const
-{
-    DicePMF d;
-    for(const auto& [roll,prob] : pmf)
-        d.pmf[roll-rhs] = prob;
-    return d;
-}
-DicePMF operator-(double lhs, const DicePMF& rhs)
-{
-    return (-rhs)+lhs;
-}
-
-DicePMF DicePMF::operator*(double rhs) const
-{
-    DicePMF d;
-    for(const auto& [roll,prob] : pmf)
-        d.pmf[roll*rhs] = prob;
-    return d;
-}
-
-DicePMF operator*(double lhs, const DicePMF& rhs)
-{
-    return rhs*lhs;
-}
-
-DicePMF DicePMF::operator/(double rhs) const
-{
-    DicePMF d;
-    for(const auto& [roll,prob] : pmf)
-        d.pmf[roll/rhs] = prob;
-    return d;
-}
-
-DicePMF operator/(double lhs, const DicePMF& rhs)
-{
-    return DicePMF(lhs)/rhs;
-}
 
 DicePMF DicePMF::unary_operate(unary_op op) const
 {
@@ -98,6 +39,9 @@ DicePMF DicePMF::unary_operate(unary_op op) const
         d.pmf[func_lut[op](roll)] = prob;
     return d;
 }
+
+DicePMF DicePMF::operator+() const  { return unary_operate(unary_op::plus); }
+DicePMF DicePMF::operator-() const  { return unary_operate(unary_op::minus); }
 
 DicePMF DicePMF::binary_operate(const DicePMF& other, binary_op op) const
 {
@@ -126,25 +70,20 @@ DicePMF DicePMF::binary_operate(const DicePMF& other, binary_op op) const
     return d;
 }
 
-DicePMF DicePMF::operator+(const DicePMF& rhs) const
-{
-    return binary_operate(rhs, binary_op::add);
-}
+DicePMF DicePMF::operator+(double rhs) const    { return binary_operate(scalar_distr(rhs), binary_op::add); }
+DicePMF DicePMF::operator-(double rhs) const    { return binary_operate(scalar_distr(rhs), binary_op::sub); }
+DicePMF DicePMF::operator*(double rhs) const    { return binary_operate(scalar_distr(rhs), binary_op::mul); }
+DicePMF DicePMF::operator/(double rhs) const    { return binary_operate(scalar_distr(rhs), binary_op::div); }
 
-DicePMF DicePMF::operator-(const DicePMF& rhs) const
-{
-    return binary_operate(rhs, binary_op::sub);
-}
+DicePMF operator+(double lhs, const DicePMF& rhs)   { return rhs+lhs; }
+DicePMF operator-(double lhs, const DicePMF& rhs)   {return (-rhs)+lhs; }
+DicePMF operator*(double lhs, const DicePMF& rhs)   { return rhs*lhs; }
+DicePMF operator/(double lhs, const DicePMF& rhs)   { return DicePMF(lhs)/rhs; }
 
-DicePMF DicePMF::operator*(const DicePMF& rhs) const
-{
-    return binary_operate(rhs, binary_op::mul);
-}
-
-DicePMF DicePMF::operator/(const DicePMF& rhs) const
-{
-    return binary_operate(rhs, binary_op::div);
-}
+DicePMF DicePMF::operator+(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::add); }
+DicePMF DicePMF::operator-(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::sub); }
+DicePMF DicePMF::operator*(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::mul); }
+DicePMF DicePMF::operator/(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::div); }
 
 /**
  * STATISTICS FUNCTIONS
@@ -224,7 +163,9 @@ double DicePMF::roll() const
  */
 DicePMF scalar_distr(double value)
 {
-    return DicePMF(1)*value;
+    DicePMF d;
+    d.pmf[value] = 1.0;
+    return d;
 }
 
 DicePMF nds_distr(int numdice, int numsides)
