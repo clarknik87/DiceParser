@@ -6,9 +6,9 @@
 #include <random>
 #include "dice_pmf.hpp"
 
-/**
+/******************************************************************************
  * CONSTRUCTORS
- */
+ *****************************************************************************/
 DicePMF::DicePMF(int numsides)
 {
     for(int i=1; i<=numsides; ++i)
@@ -20,9 +20,9 @@ DicePMF::DicePMF(const std::map<double,double>& m) : pmf(m)
     return;
 }
 
-/**
+/******************************************************************************
  * ARITHMETIC OPERATOR OVERLOADS
- */
+ *****************************************************************************/
 
 DicePMF DicePMF::unary_operate(unary_op op) const
 {
@@ -78,16 +78,16 @@ DicePMF DicePMF::operator/(double rhs) const    { return binary_operate(scalar_d
 DicePMF operator+(double lhs, const DicePMF& rhs)   { return rhs+lhs; }
 DicePMF operator-(double lhs, const DicePMF& rhs)   {return (-rhs)+lhs; }
 DicePMF operator*(double lhs, const DicePMF& rhs)   { return rhs*lhs; }
-DicePMF operator/(double lhs, const DicePMF& rhs)   { return DicePMF(lhs)/rhs; }
+DicePMF operator/(double lhs, const DicePMF& rhs)   { return scalar_distr(lhs)/rhs; }
 
 DicePMF DicePMF::operator+(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::add); }
 DicePMF DicePMF::operator-(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::sub); }
 DicePMF DicePMF::operator*(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::mul); }
 DicePMF DicePMF::operator/(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::div); }
 
-/**
+/******************************************************************************
  * STATISTICS FUNCTIONS
- */
+ *****************************************************************************/
 double DicePMF::minimum() const
 {
     return pmf.cbegin()->first;
@@ -120,9 +120,9 @@ double DicePMF::standard_dev() const
     return std::sqrt(variance());
 }
 
-/**
+/******************************************************************************
  * ELEMENT ACCESS
- */
+ *****************************************************************************/
 const std::map<double,double>& DicePMF::get_pmf()
 {
     return pmf;
@@ -138,9 +138,9 @@ auto DicePMF::probs_view() const
     return std::views::values(pmf);
 }
 
-/**
+/******************************************************************************
  * RANDOM SELECTION
- */
+ *****************************************************************************/
 static std::random_device rd;
 static std::mt19937 rand_gen(rd());
 
@@ -158,9 +158,9 @@ double DicePMF::roll() const
     return 0.0;
 }
 
-/**
+/******************************************************************************
  * DICE FACTORY METHODS
- */
+ *****************************************************************************/
 DicePMF scalar_distr(double value)
 {
     DicePMF d;
@@ -315,9 +315,9 @@ DicePMF compound_min_distr(int numdice, int totaldice, int numsides)
     return compound_distr(numdice, totaldice, numsides, false);
 }
 
-/**
+/******************************************************************************
  * DEBUG/UTILITY METHODS
- */
+ *****************************************************************************/
 std::ostream& operator<< (std::ostream& stream, const DicePMF& pmf)
 {
     stream << std::setprecision(4);

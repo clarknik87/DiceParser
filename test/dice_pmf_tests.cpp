@@ -189,4 +189,14 @@ TEST(DIcePMF, arithmetic)
     EXPECT_NEAR((1-DicePMF(1)).expected_value(), 0, float_epsilon);
     EXPECT_NEAR((1*DicePMF(1)).expected_value(), 1, float_epsilon);
     EXPECT_NEAR((1/DicePMF(1)).expected_value(), 1, float_epsilon);
+
+    EXPECT_NEAR((2+scalar_distr(2)).expected_value(), 4, float_epsilon);
+    EXPECT_NEAR((2-scalar_distr(2)).expected_value(), 0, float_epsilon);
+    EXPECT_NEAR((2*scalar_distr(2)).expected_value(), 4, float_epsilon);
+    EXPECT_NEAR((4/scalar_distr(2)).expected_value(), 2, float_epsilon);
+
+    EXPECT_NEAR((0.5+scalar_distr(-3)).expected_value(), -2.5, float_epsilon);
+    EXPECT_NEAR((0.5-scalar_distr(-3)).expected_value(), 3.5, float_epsilon);
+    EXPECT_NEAR((0.5*scalar_distr(-3)).expected_value(), -1.5, float_epsilon);
+    EXPECT_NEAR((0.5/scalar_distr(-4)).expected_value(), -0.125, float_epsilon);
 }
