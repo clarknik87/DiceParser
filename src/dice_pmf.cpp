@@ -31,12 +31,24 @@ DicePMF DicePMF::unary_operate(unary_op op) const
     std::map<unary_op, one_arg_func_ptr> func_lut{
         {unary_op::plus, [](double a){return a;}},
         {unary_op::minus, [](double a){return -a;}},
+        {unary_op::abs, [](double a){return std::abs(a);}},
+        {unary_op::ceil, [](double a){return std::ceil(a);}},
+        {unary_op::floor, [](double a){return std::floor(a);}},
+        {unary_op::trunc, [](double a){return std::trunc(a);}},
+        {unary_op::round, [](double a){return std::round(a);}},
+        {unary_op::sqrt, [](double a){return std::sqrt(a);}},
     };
 
     //Operate elementwise across the roll "vector"
     DicePMF d;
     for(const auto& [roll,prob] : pmf)
-        d.pmf[func_lut[op](roll)] = prob;
+    {
+        double operated_roll = func_lut[op](roll);
+        if(d.pmf.contains(operated_roll))
+            d.pmf[operated_roll] += prob;
+        else
+            d.pmf[operated_roll] = prob;
+    }
     return d;
 }
 
@@ -52,6 +64,7 @@ DicePMF DicePMF::binary_operate(const DicePMF& other, binary_op op) const
         {binary_op::sub, [](double a, double b){return a-b;}},
         {binary_op::mul, [](double a, double b){return a*b;}},
         {binary_op::div, [](double a, double b){return a/b;}},
+        {binary_op::pow, [](double a, double b){return std::pow(a,b);}},
     };
 
     // Operate and sum probabilites
@@ -135,6 +148,18 @@ double DicePMF::operator>=(const DicePMF& rhs) const    { return (*this)-rhs >= 
 double DicePMF::operator<=(const DicePMF& rhs) const    { return (*this)-rhs <= 0.0; }
 double DicePMF::operator==(const DicePMF& rhs) const    { return (*this)-rhs == 0.0; }
 double DicePMF::operator!=(const DicePMF& rhs) const    { return (*this)-rhs != 0.0; }
+
+/******************************************************************************
+ * BUILTIN FUNCTIONS
+ *****************************************************************************/
+DicePMF DicePMF::abs() const                    { return unary_operate(unary_op::abs); }
+DicePMF DicePMF::ceil() const                   { return unary_operate(unary_op::ceil); }
+DicePMF DicePMF::floor() const                  { return unary_operate(unary_op::floor); }
+DicePMF DicePMF::trunc() const                  { return unary_operate(unary_op::trunc); }
+DicePMF DicePMF::round() const                  { return unary_operate(unary_op::round); }
+DicePMF DicePMF::sqrt() const                   { return unary_operate(unary_op::sqrt); }
+DicePMF DicePMF::pow(double rhs) const          { return binary_operate(scalar_distr(rhs), binary_op::pow);}     
+DicePMF DicePMF::pow(const DicePMF& rhs) const  { return binary_operate(rhs, binary_op::pow);}       
 
 /******************************************************************************
  * STATISTICS FUNCTIONS

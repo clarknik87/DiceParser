@@ -233,3 +233,14 @@ TEST(DicePMF, comparison)
     EXPECT_NEAR(nds_distr(1,4) == nds_distr(1,4), 0.25, float_epsilon);
     EXPECT_NEAR(nds_distr(1,4) != nds_distr(1,4), 0.75, float_epsilon);
 }
+
+TEST(DicePMF, builtin_functions)
+{
+    EXPECT_NEAR((nds_distr(1,6)-2).abs().minimum(), 0.0, float_epsilon);        //abs
+    EXPECT_NEAR((nds_distr(1,6)-1.5).ceil().minimum(), 0.0, float_epsilon);     //ceil
+    EXPECT_NEAR((nds_distr(1,6)-1.5).floor().minimum(), -1.0, float_epsilon);   //floor
+    EXPECT_NEAR((nds_distr(1,6)-1.5).trunc().minimum(), 0.0, float_epsilon);    //trunc
+    EXPECT_NEAR((nds_distr(1,6)-1.5).round().minimum(), -1.0, float_epsilon);   //round
+    EXPECT_NEAR((nds_distr(1,6)).sqrt().minimum(), 1.0, float_epsilon);         //sqrt
+    EXPECT_NEAR((nds_distr(1,6)).pow(2).maximum(), 36.0, float_epsilon);        //pow(2)
+}

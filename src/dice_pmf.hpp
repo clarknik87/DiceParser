@@ -19,13 +19,20 @@ class DicePMF
 private:
     enum class unary_op{
         plus,
-        minus
+        minus,
+        abs,
+        ceil,
+        floor,
+        trunc,
+        round,
+        sqrt
     };
     enum class binary_op{
         add,
         sub,
         mul,
-        div
+        div,
+        pow   
     };
 
     std::map<double,double> pmf;
@@ -72,6 +79,16 @@ public:
     double operator<=(const DicePMF& rhs) const;
     double operator==(const DicePMF& rhs) const;
     double operator!=(const DicePMF& rhs) const;
+
+    // Builtin functions
+    DicePMF abs() const;
+    DicePMF ceil() const;
+    DicePMF floor() const;
+    DicePMF trunc() const;
+    DicePMF round() const;
+    DicePMF sqrt() const;
+    DicePMF pow(double rhs) const;
+    DicePMF pow(const DicePMF& rhs) const;
 
     // Stats functions
     double minimum() const;
