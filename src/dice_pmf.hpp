@@ -57,7 +57,21 @@ public:
     DicePMF operator-(const DicePMF& rhs) const;
     DicePMF operator*(const DicePMF& rhs) const;
     DicePMF operator/(const DicePMF& rhs) const;
-    
+
+    // Comparison Operator overloads
+    double operator>(double scalar) const;
+    double operator<(double scalar) const;
+    double operator>=(double scalar) const;
+    double operator<=(double scalar) const;
+    double operator==(double scalar) const;
+    double operator!=(double scalar) const;
+
+    double operator>(const DicePMF& rhs) const;
+    double operator<(const DicePMF& rhs) const;
+    double operator>=(const DicePMF& rhs) const;
+    double operator<=(const DicePMF& rhs) const;
+    double operator==(const DicePMF& rhs) const;
+    double operator!=(const DicePMF& rhs) const;
 
     // Stats functions
     double minimum() const;
@@ -83,6 +97,14 @@ DicePMF operator+(double lhs, const DicePMF& rhs);
 DicePMF operator-(double lhs, const DicePMF& rhs);
 DicePMF operator*(double lhs, const DicePMF& rhs);
 DicePMF operator/(double lhs, const DicePMF& rhs);
+
+// Comparison Operator overloads
+double operator>(double scalar, const DicePMF& rhs);
+double operator>=(double scalar, const DicePMF& rhs);
+double operator<(double scalar, const DicePMF& rhs);
+double operator<=(double scalar, const DicePMF& rhs);
+double operator==(double scalar, const DicePMF& rhs);
+double operator!=(double scalar, const DicePMF& rhs);
 
 // Dice Factory Methods
 DicePMF scalar_distr(double value);

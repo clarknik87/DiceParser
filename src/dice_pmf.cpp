@@ -86,6 +86,57 @@ DicePMF DicePMF::operator*(const DicePMF& rhs) const    { return binary_operate(
 DicePMF DicePMF::operator/(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::div); }
 
 /******************************************************************************
+ * COMPARISON FUNCTIONS
+ *****************************************************************************/
+double DicePMF::operator>(double scalar) const
+{ 
+    double result = 0.0;
+    for(const auto& [roll, prob] : pmf)
+    {
+        if(roll > scalar)
+            result += prob;
+    }
+    return result;
+}
+double DicePMF::operator<(double scalar) const  { return 1-((*this) >= scalar); }
+double DicePMF::operator>=(double scalar) const 
+{
+    double result = 0.0;
+    for(const auto& [roll, prob] : pmf)
+    {
+        if(roll >= scalar)
+            result += prob;
+    }
+    return result;
+}
+double DicePMF::operator<=(double scalar) const { return 1-((*this) > scalar); }
+double DicePMF::operator==(double scalar) const
+{
+    double result = 0.0;
+    for(const auto& [roll, prob] : pmf)
+    {
+        if(roll == scalar)
+            result += prob;
+    }
+    return result;
+}
+double DicePMF::operator!=(double scalar) const {return 1-((*this) == scalar); }
+
+double operator>(double scalar, const DicePMF& rhs)     { return rhs < scalar; }
+double operator>=(double scalar, const DicePMF& rhs)    { return rhs <= scalar; }
+double operator<(double scalar, const DicePMF& rhs)     { return rhs > scalar; }
+double operator<=(double scalar, const DicePMF& rhs)    { return rhs >= scalar; }
+double operator==(double scalar, const DicePMF& rhs)    { return rhs == scalar; }
+double operator!=(double scalar, const DicePMF& rhs)    { return rhs != scalar; }
+
+double DicePMF::operator>(const DicePMF& rhs) const     { return (*this)-rhs > 0.0; }
+double DicePMF::operator<(const DicePMF& rhs) const     { return (*this)-rhs < 0.0; }
+double DicePMF::operator>=(const DicePMF& rhs) const    { return (*this)-rhs >= 0.0; }
+double DicePMF::operator<=(const DicePMF& rhs) const    { return (*this)-rhs <= 0.0; }
+double DicePMF::operator==(const DicePMF& rhs) const    { return (*this)-rhs == 0.0; }
+double DicePMF::operator!=(const DicePMF& rhs) const    { return (*this)-rhs != 0.0; }
+
+/******************************************************************************
  * STATISTICS FUNCTIONS
  *****************************************************************************/
 double DicePMF::minimum() const

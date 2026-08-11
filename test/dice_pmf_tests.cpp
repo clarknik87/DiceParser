@@ -173,7 +173,7 @@ TEST(DicePMF, roll)
 }
 */
 
-TEST(DIcePMF, arithmetic)
+TEST(DicePMF, arithmetic)
 {
     // unary operations
     EXPECT_NEAR((+DicePMF(1)).expected_value(), 1, float_epsilon);
@@ -199,4 +199,37 @@ TEST(DIcePMF, arithmetic)
     EXPECT_NEAR((0.5-scalar_distr(-3)).expected_value(), 3.5, float_epsilon);
     EXPECT_NEAR((0.5*scalar_distr(-3)).expected_value(), -1.5, float_epsilon);
     EXPECT_NEAR((0.5/scalar_distr(-4)).expected_value(), -0.125, float_epsilon);
+}
+
+TEST(DicePMF, comparison)
+{
+    // double and DicePMF 
+    EXPECT_NEAR(nds_distr(1,4) >  1.0, 0.75, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) >= 1.0, 1.00, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) <  1.0, 0.00, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) <= 1.0, 0.25, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) == 1.0, 0.25, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) != 1.0, 0.75, float_epsilon);
+
+    EXPECT_NEAR(1.0 <  nds_distr(1,4), 0.75, float_epsilon);
+    EXPECT_NEAR(1.0 <= nds_distr(1,4), 1.00, float_epsilon);
+    EXPECT_NEAR(1.0 >  nds_distr(1,4), 0.00, float_epsilon);
+    EXPECT_NEAR(1.0 >= nds_distr(1,4), 0.25, float_epsilon);
+    EXPECT_NEAR(1.0 == nds_distr(1,4), 0.25, float_epsilon);
+    EXPECT_NEAR(1.0 != nds_distr(1,4), 0.75, float_epsilon);
+
+    // DicePMF and DicePMF
+    EXPECT_NEAR(nds_distr(1,4) >  scalar_distr(1.0), 0.75, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) >= scalar_distr(1.0), 1.00, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) <  scalar_distr(1.0), 0.00, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) <= scalar_distr(1.0), 0.25, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) == scalar_distr(1.0), 0.25, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) != scalar_distr(1.0), 0.75, float_epsilon);
+
+    EXPECT_NEAR(nds_distr(1,4) >  nds_distr(1,4), 0.375, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) >= nds_distr(1,4), 0.625, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) <  nds_distr(1,4), 0.375, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) <= nds_distr(1,4), 0.625, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) == nds_distr(1,4), 0.25, float_epsilon);
+    EXPECT_NEAR(nds_distr(1,4) != nds_distr(1,4), 0.75, float_epsilon);
 }
