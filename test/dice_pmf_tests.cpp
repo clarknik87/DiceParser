@@ -6,14 +6,13 @@
 
 #include "unit_test.hpp"
 #include "dice_pmf.hpp"
-// #include "dice_parser/dice_parser.hpp"
 
 TEST(DicePMF, valid_ctor)
 {
     // scalar ctor
-    EXPECT_EQ(scalar_distr(1.0).get_pmf().at(1.0), 1.0);
-    EXPECT_EQ(scalar_distr(2.0).get_pmf().at(2.0), 1.0);
-    EXPECT_EQ(scalar_distr(5.6).get_pmf().at(5.6), 1.0);
+    EXPECT_EQ(DicePMF::scalar_distr(1.0).get_pmf().at(1.0), 1.0);
+    EXPECT_EQ(DicePMF::scalar_distr(2.0).get_pmf().at(2.0), 1.0);
+    EXPECT_EQ(DicePMF::scalar_distr(5.6).get_pmf().at(5.6), 1.0);
 
     // 1dn ctor
     EXPECT_EQ(DicePMF(1).get_pmf().at(1.0), 1.0/1.0);
@@ -25,67 +24,67 @@ TEST(DicePMF, valid_ctor)
     EXPECT_EQ(DicePMF(20).get_pmf().at(1.0), 1.0/20.0);
 
     // nds ctor
-    EXPECT_NEAR(nds_distr(2,2).get_pmf().at(2.0), 0.25, float_epsilon);
-    EXPECT_NEAR(nds_distr(2,4).get_pmf().at(2.0), 0.0625, float_epsilon);
-    EXPECT_NEAR(nds_distr(2,6).get_pmf().at(2.0), 0.0278, float_epsilon);
-    EXPECT_NEAR(nds_distr(2,8).get_pmf().at(2.0), 0.0156, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,2).get_pmf().at(2.0), 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,4).get_pmf().at(2.0), 0.0625, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,6).get_pmf().at(2.0), 0.0278, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,8).get_pmf().at(2.0), 0.0156, float_epsilon);
 
     // max ctor
-    EXPECT_NEAR(max_distr(2,2).get_pmf().at(1.0), 0.25, float_epsilon);
-    EXPECT_NEAR(max_distr(2,4).get_pmf().at(1.0), 0.0625, float_epsilon);
-    EXPECT_NEAR(max_distr(2,6).get_pmf().at(1.0), 0.0278, float_epsilon);
-    EXPECT_NEAR(max_distr(2,20).get_pmf().at(1.0), 0.0025, float_epsilon);
+    EXPECT_NEAR(DicePMF::max_distr(2,2).get_pmf().at(1.0), 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::max_distr(2,4).get_pmf().at(1.0), 0.0625, float_epsilon);
+    EXPECT_NEAR(DicePMF::max_distr(2,6).get_pmf().at(1.0), 0.0278, float_epsilon);
+    EXPECT_NEAR(DicePMF::max_distr(2,20).get_pmf().at(1.0), 0.0025, float_epsilon);
 
     // min ctor
-    EXPECT_NEAR(min_distr(2,2).get_pmf().at(2.0), 0.25, float_epsilon);
-    EXPECT_NEAR(min_distr(2,4).get_pmf().at(4.0), 0.0625, float_epsilon);
-    EXPECT_NEAR(min_distr(2,6).get_pmf().at(6.0), 0.0278, float_epsilon);
-    EXPECT_NEAR(min_distr(2,20).get_pmf().at(20.0), 0.0025, float_epsilon);
+    EXPECT_NEAR(DicePMF::min_distr(2,2).get_pmf().at(2.0), 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::min_distr(2,4).get_pmf().at(4.0), 0.0625, float_epsilon);
+    EXPECT_NEAR(DicePMF::min_distr(2,6).get_pmf().at(6.0), 0.0278, float_epsilon);
+    EXPECT_NEAR(DicePMF::min_distr(2,20).get_pmf().at(20.0), 0.0025, float_epsilon);
 
     // max(x,nds) ctor
-    EXPECT_NEAR(compound_max_distr(2,3,2).get_pmf().at(2.0), 0.125, float_epsilon);
-    EXPECT_NEAR(compound_max_distr(2,3,4).get_pmf().at(4.0), 0.1094, float_epsilon);
-    EXPECT_NEAR(compound_max_distr(2,3,6).get_pmf().at(6.0), 0.0880, float_epsilon);
-    EXPECT_NEAR(compound_max_distr(2,3,20).get_pmf().at(20.0), 0.0339, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_max_distr(2,3,2).get_pmf().at(2.0), 0.125, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_max_distr(2,3,4).get_pmf().at(4.0), 0.1094, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_max_distr(2,3,6).get_pmf().at(6.0), 0.0880, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_max_distr(2,3,20).get_pmf().at(20.0), 0.0339, float_epsilon);
 
     // min(x,nds) ctor
-    EXPECT_NEAR(compound_min_distr(2,3,2).get_pmf().at(2.0), 0.5, float_epsilon);
-    EXPECT_NEAR(compound_min_distr(2,3,4).get_pmf().at(4.0), 0.25, float_epsilon);
-    EXPECT_NEAR(compound_min_distr(2,3,6).get_pmf().at(6.0), 0.1574, float_epsilon);
-    EXPECT_NEAR(compound_min_distr(2,3,20).get_pmf().at(20.0), 0.0410, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_min_distr(2,3,2).get_pmf().at(2.0), 0.5, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_min_distr(2,3,4).get_pmf().at(4.0), 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_min_distr(2,3,6).get_pmf().at(6.0), 0.1574, float_epsilon);
+    EXPECT_NEAR(DicePMF::compound_min_distr(2,3,20).get_pmf().at(20.0), 0.0410, float_epsilon);
 }
 
 TEST(DicePMF, stats)
 {
     // minimum
-    EXPECT_NEAR(nds_distr(2,2).minimum(), 2.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(3,4).minimum(), 3.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(4,6).minimum(), 4.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(5,8).minimum(), 5.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,2).minimum(), 2.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(3,4).minimum(), 3.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(4,6).minimum(), 4.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(5,8).minimum(), 5.0, float_epsilon);
 
     // maximum
-    EXPECT_NEAR(nds_distr(2,2).maximum(), 4.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(3,4).maximum(), 12.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(4,6).maximum(), 24.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(5,8).maximum(), 40.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,2).maximum(), 4.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(3,4).maximum(), 12.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(4,6).maximum(), 24.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(5,8).maximum(), 40.0, float_epsilon);
 
     // expected value
-    EXPECT_NEAR(nds_distr(2,2).expected_value(), 3.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(3,4).expected_value(), 7.5, float_epsilon);
-    EXPECT_NEAR(nds_distr(4,6).expected_value(), 14.0, float_epsilon);
-    EXPECT_NEAR(nds_distr(5,8).expected_value(), 22.5, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,2).expected_value(), 3.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(3,4).expected_value(), 7.5, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(4,6).expected_value(), 14.0, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(5,8).expected_value(), 22.5, float_epsilon);
 
     // variance
-    EXPECT_NEAR(nds_distr(2,2).variance(), 0.5, float_epsilon);
-    EXPECT_NEAR(nds_distr(3,4).variance(), 3.75, float_epsilon);
-    EXPECT_NEAR(nds_distr(4,6).variance(), 11.6666, float_epsilon);
-    EXPECT_NEAR(nds_distr(5,8).variance(), 26.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,2).variance(), 0.5, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(3,4).variance(), 3.75, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(4,6).variance(), 11.6666, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(5,8).variance(), 26.25, float_epsilon);
 
     // standard dev
-    EXPECT_NEAR(nds_distr(2,2).standard_dev(), 0.7071, float_epsilon);
-    EXPECT_NEAR(nds_distr(3,4).standard_dev(), 1.9365, float_epsilon);
-    EXPECT_NEAR(nds_distr(4,6).standard_dev(), 3.4157, float_epsilon);
-    EXPECT_NEAR(nds_distr(5,8).standard_dev(), 5.1235, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(2,2).standard_dev(), 0.7071, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(3,4).standard_dev(), 1.9365, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(4,6).standard_dev(), 3.4157, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(5,8).standard_dev(), 5.1235, float_epsilon);
 }
 
 /*
@@ -190,57 +189,57 @@ TEST(DicePMF, arithmetic)
     EXPECT_NEAR((1*DicePMF(1)).expected_value(), 1, float_epsilon);
     EXPECT_NEAR((1/DicePMF(1)).expected_value(), 1, float_epsilon);
 
-    EXPECT_NEAR((2+scalar_distr(2)).expected_value(), 4, float_epsilon);
-    EXPECT_NEAR((2-scalar_distr(2)).expected_value(), 0, float_epsilon);
-    EXPECT_NEAR((2*scalar_distr(2)).expected_value(), 4, float_epsilon);
-    EXPECT_NEAR((4/scalar_distr(2)).expected_value(), 2, float_epsilon);
+    EXPECT_NEAR((2+DicePMF::scalar_distr(2)).expected_value(), 4, float_epsilon);
+    EXPECT_NEAR((2-DicePMF::scalar_distr(2)).expected_value(), 0, float_epsilon);
+    EXPECT_NEAR((2*DicePMF::scalar_distr(2)).expected_value(), 4, float_epsilon);
+    EXPECT_NEAR((4/DicePMF::scalar_distr(2)).expected_value(), 2, float_epsilon);
 
-    EXPECT_NEAR((0.5+scalar_distr(-3)).expected_value(), -2.5, float_epsilon);
-    EXPECT_NEAR((0.5-scalar_distr(-3)).expected_value(), 3.5, float_epsilon);
-    EXPECT_NEAR((0.5*scalar_distr(-3)).expected_value(), -1.5, float_epsilon);
-    EXPECT_NEAR((0.5/scalar_distr(-4)).expected_value(), -0.125, float_epsilon);
+    EXPECT_NEAR((0.5+DicePMF::scalar_distr(-3)).expected_value(), -2.5, float_epsilon);
+    EXPECT_NEAR((0.5-DicePMF::scalar_distr(-3)).expected_value(), 3.5, float_epsilon);
+    EXPECT_NEAR((0.5*DicePMF::scalar_distr(-3)).expected_value(), -1.5, float_epsilon);
+    EXPECT_NEAR((0.5/DicePMF::scalar_distr(-4)).expected_value(), -0.125, float_epsilon);
 }
 
 TEST(DicePMF, comparison)
 {
     // double and DicePMF 
-    EXPECT_NEAR(nds_distr(1,4) >  1.0, 0.75, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) >= 1.0, 1.00, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) <  1.0, 0.00, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) <= 1.0, 0.25, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) == 1.0, 0.25, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) != 1.0, 0.75, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) >  1.0, 0.75, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) >= 1.0, 1.00, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) <  1.0, 0.00, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) <= 1.0, 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) == 1.0, 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) != 1.0, 0.75, float_epsilon);
 
-    EXPECT_NEAR(1.0 <  nds_distr(1,4), 0.75, float_epsilon);
-    EXPECT_NEAR(1.0 <= nds_distr(1,4), 1.00, float_epsilon);
-    EXPECT_NEAR(1.0 >  nds_distr(1,4), 0.00, float_epsilon);
-    EXPECT_NEAR(1.0 >= nds_distr(1,4), 0.25, float_epsilon);
-    EXPECT_NEAR(1.0 == nds_distr(1,4), 0.25, float_epsilon);
-    EXPECT_NEAR(1.0 != nds_distr(1,4), 0.75, float_epsilon);
+    EXPECT_NEAR(1.0 <  DicePMF::nds_distr(1,4), 0.75, float_epsilon);
+    EXPECT_NEAR(1.0 <= DicePMF::nds_distr(1,4), 1.00, float_epsilon);
+    EXPECT_NEAR(1.0 >  DicePMF::nds_distr(1,4), 0.00, float_epsilon);
+    EXPECT_NEAR(1.0 >= DicePMF::nds_distr(1,4), 0.25, float_epsilon);
+    EXPECT_NEAR(1.0 == DicePMF::nds_distr(1,4), 0.25, float_epsilon);
+    EXPECT_NEAR(1.0 != DicePMF::nds_distr(1,4), 0.75, float_epsilon);
 
     // DicePMF and DicePMF
-    EXPECT_NEAR(nds_distr(1,4) >  scalar_distr(1.0), 0.75, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) >= scalar_distr(1.0), 1.00, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) <  scalar_distr(1.0), 0.00, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) <= scalar_distr(1.0), 0.25, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) == scalar_distr(1.0), 0.25, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) != scalar_distr(1.0), 0.75, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) >  DicePMF::scalar_distr(1.0), 0.75, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) >= DicePMF::scalar_distr(1.0), 1.00, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) <  DicePMF::scalar_distr(1.0), 0.00, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) <= DicePMF::scalar_distr(1.0), 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) == DicePMF::scalar_distr(1.0), 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) != DicePMF::scalar_distr(1.0), 0.75, float_epsilon);
 
-    EXPECT_NEAR(nds_distr(1,4) >  nds_distr(1,4), 0.375, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) >= nds_distr(1,4), 0.625, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) <  nds_distr(1,4), 0.375, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) <= nds_distr(1,4), 0.625, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) == nds_distr(1,4), 0.25, float_epsilon);
-    EXPECT_NEAR(nds_distr(1,4) != nds_distr(1,4), 0.75, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) >  DicePMF::nds_distr(1,4), 0.375, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) >= DicePMF::nds_distr(1,4), 0.625, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) <  DicePMF::nds_distr(1,4), 0.375, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) <= DicePMF::nds_distr(1,4), 0.625, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) == DicePMF::nds_distr(1,4), 0.25, float_epsilon);
+    EXPECT_NEAR(DicePMF::nds_distr(1,4) != DicePMF::nds_distr(1,4), 0.75, float_epsilon);
 }
 
 TEST(DicePMF, builtin_functions)
 {
-    EXPECT_NEAR((nds_distr(1,6)-2).abs().minimum(), 0.0, float_epsilon);        //abs
-    EXPECT_NEAR((nds_distr(1,6)-1.5).ceil().minimum(), 0.0, float_epsilon);     //ceil
-    EXPECT_NEAR((nds_distr(1,6)-1.5).floor().minimum(), -1.0, float_epsilon);   //floor
-    EXPECT_NEAR((nds_distr(1,6)-1.5).trunc().minimum(), 0.0, float_epsilon);    //trunc
-    EXPECT_NEAR((nds_distr(1,6)-1.5).round().minimum(), -1.0, float_epsilon);   //round
-    EXPECT_NEAR((nds_distr(1,6)).sqrt().minimum(), 1.0, float_epsilon);         //sqrt
-    EXPECT_NEAR((nds_distr(1,6)).pow(2).maximum(), 36.0, float_epsilon);        //pow(2)
+    EXPECT_NEAR((DicePMF::nds_distr(1,6)-2).abs().minimum(), 0.0, float_epsilon);        //abs
+    EXPECT_NEAR((DicePMF::nds_distr(1,6)-1.5).ceil().minimum(), 0.0, float_epsilon);     //ceil
+    EXPECT_NEAR((DicePMF::nds_distr(1,6)-1.5).floor().minimum(), -1.0, float_epsilon);   //floor
+    EXPECT_NEAR((DicePMF::nds_distr(1,6)-1.5).trunc().minimum(), 0.0, float_epsilon);    //trunc
+    EXPECT_NEAR((DicePMF::nds_distr(1,6)-1.5).round().minimum(), -1.0, float_epsilon);   //round
+    EXPECT_NEAR((DicePMF::nds_distr(1,6)).sqrt().minimum(), 1.0, float_epsilon);         //sqrt
+    EXPECT_NEAR((DicePMF::nds_distr(1,6)).pow(2).maximum(), 36.0, float_epsilon);        //pow(2)
 }

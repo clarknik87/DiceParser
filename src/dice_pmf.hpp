@@ -34,6 +34,8 @@ private:
         div,
         pow   
     };
+    DicePMF unary_operate(unary_op op) const;
+    DicePMF binary_operate(const DicePMF& other, binary_op op) const;
 
     std::map<double,double> pmf;
 public:
@@ -42,13 +44,18 @@ public:
     DicePMF(int numsides);
     explicit DicePMF(const std::map<double,double>& m);
 
-    friend DicePMF scalar_distr(double value);
-    friend DicePMF nds_distr(int numdice, int numsides);
-    friend DicePMF max_distr(int numdice, int numsides);
-    friend DicePMF min_distr(int numdice, int numsides);
-    friend DicePMF compound_distr(int numdice, int totaldice, int numsides, bool is_max);
-    friend DicePMF compound_max_distr(int numdice, int totaldice, int numsides);
-    friend DicePMF compound_min_distr(int numdice, int totaldice, int numsides);
+    // Factory methods
+    static DicePMF scalar_distr(double value);
+    static DicePMF nds_distr(int numdice, int numsides);
+    static DicePMF max_distr(int numdice, int numsides);
+    static DicePMF min_distr(int numdice, int numsides);
+    static DicePMF compound_distr(int numdice, int totaldice, int numsides, bool is_max);
+    static DicePMF compound_max_distr(int numdice, int totaldice, int numsides);
+    static DicePMF compound_min_distr(int numdice, int totaldice, int numsides);
+
+    // Type conversion
+    bool is_scalar() const;
+    double get_scalar() const;
 
     // Arithmetic Operator overloads
     DicePMF operator+() const;
@@ -58,8 +65,6 @@ public:
     DicePMF operator*(double rhs) const;
     DicePMF operator/(double rhs) const;
 
-    DicePMF unary_operate(unary_op op) const;
-    DicePMF binary_operate(const DicePMF& other, binary_op op) const;
     DicePMF operator+(const DicePMF& rhs) const;
     DicePMF operator-(const DicePMF& rhs) const;
     DicePMF operator*(const DicePMF& rhs) const;
@@ -98,7 +103,7 @@ public:
     double standard_dev() const;
 
     // Element Access
-    const std::map<double,double>& get_pmf();
+    const std::map<double,double>& get_pmf() const;
     auto rolls_view() const;
     auto probs_view() const;
 
@@ -122,13 +127,5 @@ double operator<(double scalar, const DicePMF& rhs);
 double operator<=(double scalar, const DicePMF& rhs);
 double operator==(double scalar, const DicePMF& rhs);
 double operator!=(double scalar, const DicePMF& rhs);
-
-// Dice Factory Methods
-DicePMF scalar_distr(double value);
-DicePMF nds_distr(int numdice, int numsides);
-DicePMF max_distr(int numdice, int numsides);
-DicePMF min_distr(int numdice, int numsides);
-DicePMF compound_max_distr(int numdice, int totaldice, int numsides);
-DicePMF compound_min_distr(int numdice, int totaldice, int numsides);
 
 #endif//DICE_PMF_HPP_GUARD

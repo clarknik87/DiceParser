@@ -21,6 +21,19 @@ DicePMF::DicePMF(const std::map<double,double>& m) : pmf(m)
 }
 
 /******************************************************************************
+ * TYPE CONVERSION
+ *****************************************************************************/
+bool DicePMF::is_scalar() const
+{
+    return (pmf.size() == 1);
+}
+
+double DicePMF::get_scalar() const
+{
+    return expected_value();
+}
+
+/******************************************************************************
  * ARITHMETIC OPERATOR OVERLOADS
  *****************************************************************************/
 
@@ -91,7 +104,7 @@ DicePMF DicePMF::operator/(double rhs) const    { return binary_operate(scalar_d
 DicePMF operator+(double lhs, const DicePMF& rhs)   { return rhs+lhs; }
 DicePMF operator-(double lhs, const DicePMF& rhs)   {return (-rhs)+lhs; }
 DicePMF operator*(double lhs, const DicePMF& rhs)   { return rhs*lhs; }
-DicePMF operator/(double lhs, const DicePMF& rhs)   { return scalar_distr(lhs)/rhs; }
+DicePMF operator/(double lhs, const DicePMF& rhs)   { return DicePMF::scalar_distr(lhs)/rhs; }
 
 DicePMF DicePMF::operator+(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::add); }
 DicePMF DicePMF::operator-(const DicePMF& rhs) const    { return binary_operate(rhs, binary_op::sub); }
@@ -199,7 +212,7 @@ double DicePMF::standard_dev() const
 /******************************************************************************
  * ELEMENT ACCESS
  *****************************************************************************/
-const std::map<double,double>& DicePMF::get_pmf()
+const std::map<double,double>& DicePMF::get_pmf() const
 {
     return pmf;
 }
@@ -237,14 +250,14 @@ double DicePMF::roll() const
 /******************************************************************************
  * DICE FACTORY METHODS
  *****************************************************************************/
-DicePMF scalar_distr(double value)
+DicePMF DicePMF::scalar_distr(double value)
 {
     DicePMF d;
     d.pmf[value] = 1.0;
     return d;
 }
 
-DicePMF nds_distr(int numdice, int numsides)
+DicePMF DicePMF::nds_distr(int numdice, int numsides)
 {
     DicePMF ret_dice(numsides);
     for(int i=0; i<numdice-1; ++i)
@@ -252,7 +265,7 @@ DicePMF nds_distr(int numdice, int numsides)
     return ret_dice;
 }
 
-DicePMF max_distr(int numdice, int numsides)
+DicePMF DicePMF::max_distr(int numdice, int numsides)
 {
     DicePMF ret_dice(numsides);
     double px = 0.0;
@@ -266,7 +279,7 @@ DicePMF max_distr(int numdice, int numsides)
     return ret_dice;
 }
 
-DicePMF min_distr(int numdice, int numsides)
+DicePMF DicePMF::min_distr(int numdice, int numsides)
 {
     DicePMF ret_dice(numsides);
     double px = 0.0;
@@ -355,7 +368,7 @@ static long int factorial(int n)
     return f;
 }
 
-DicePMF compound_distr(int numdice, int totaldice, int numsides, bool is_max)
+DicePMF DicePMF::compound_distr(int numdice, int totaldice, int numsides, bool is_max)
 {
     auto pmf = nds_distr(numdice, numsides).pmf;
     for(auto& [roll,prob] : pmf)
@@ -381,12 +394,12 @@ DicePMF compound_distr(int numdice, int totaldice, int numsides, bool is_max)
     return DicePMF(pmf);
 }
 
-DicePMF compound_max_distr(int numdice, int totaldice, int numsides)
+DicePMF DicePMF::compound_max_distr(int numdice, int totaldice, int numsides)
 {
     return compound_distr(numdice, totaldice, numsides, true);
 }
 
-DicePMF compound_min_distr(int numdice, int totaldice, int numsides)
+DicePMF DicePMF::compound_min_distr(int numdice, int totaldice, int numsides)
 {
     return compound_distr(numdice, totaldice, numsides, false);
 }

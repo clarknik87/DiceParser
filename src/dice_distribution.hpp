@@ -2,20 +2,30 @@
 #define DICE_DISTRIBUTION_HPP_GUARD
 
 #include <string>
-#include "dice_pdf.hpp"
+#include "dice_pmf.hpp"
 
 class DiceDistr
 {
 private:
     std::string m_expr;
-    DicePDF m_pdf;
+    DicePMF m_pmf;
 public:
     // Constructors
     DiceDistr() = default;
     DiceDistr(std::string expr);
-    DiceDistr(std::string expr, DicePDF pdf);
+    DiceDistr(std::string expr, DicePMF pmf);
+
+    // Type Conversion
+    bool is_scalar() const;
+    double get_scalar() const;
 
     // Comparison Operator Overloads
+    double operator>(const DiceDistr& rhs) const;
+    double operator<(const DiceDistr& rhs) const;
+    double operator>=(const DiceDistr& rhs) const;
+    double operator<=(const DiceDistr& rhs) const;
+    double operator==(const DiceDistr& rhs) const;
+    double operator!=(const DiceDistr& rhs) const;
     double operator>(double scalar) const;
     double operator<(double scalar) const;
     double operator>=(double scalar) const;
@@ -40,12 +50,26 @@ public:
     DiceDistr operator-(double scalar) const;
     DiceDistr operator*(int scalar) const;
     DiceDistr operator*(double scalar) const;
+    DiceDistr operator*(const DiceDistr& scalar) const;
+    DiceDistr operator/(int scalar) const;
+    DiceDistr operator/(double scalar) const;
+    DiceDistr operator/(const DiceDistr& scalar) const;
     friend DiceDistr operator+(int scalar, const DiceDistr& pdf);
     friend DiceDistr operator-(int scalar, const DiceDistr& pdf);
     friend DiceDistr operator*(int scalar, const DiceDistr& pdf);
     friend DiceDistr operator+(double scalar, const DiceDistr& pdf);
     friend DiceDistr operator-(double scalar, const DiceDistr& pdf);
     friend DiceDistr operator*(double scalar, const DiceDistr& pdf);
+
+    // Builtin functions
+    DiceDistr abs() const;
+    DiceDistr ceil() const;
+    DiceDistr floor() const;
+    DiceDistr trunc() const;
+    DiceDistr round() const;
+    DiceDistr sqrt() const;
+    DiceDistr pow(double rhs) const;
+    DiceDistr pow(const DiceDistr& rhs) const;
 
     // Stats functions
     double minimum() const;
@@ -55,13 +79,14 @@ public:
     double standard_dev() const;
 
     // Member Access
-    Eigen::RowVectorXd get_probs() const;
-    Eigen::RowVectorXd get_rolls() const;
-    Eigen::Matrix2Xd   get_pdfmatrix() const;
-    std::string        get_expr() const;
+    const std::map<double,double>& get_pmf() const;   
+    std::string get_expr() const;
 
     // Random selection
     double roll();
+
+    // Debug/Utility functions
+    friend std::ostream& operator<< (std::ostream& stream, const DiceDistr& distr);
 };
 
 double operator>(double scalar, const DiceDistr& rhs);
