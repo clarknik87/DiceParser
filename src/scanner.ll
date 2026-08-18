@@ -48,7 +48,7 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
 ")"               return calc::Parser::make_RPAREN();
 "=="              return calc::Parser::make_EQUAL_TO();
 "!="              return calc::Parser::make_NOT_EQUAL_TO();
-">="              return calc::Parser::make_GREATER_EQUA();
+">="              return calc::Parser::make_GREATER_EQUAL();
 "<="              return calc::Parser::make_LESS_EQUAL();
 ">"               return calc::Parser::make_GREATER_THAN();
 "<"               return calc::Parser::make_LESS_THAN();

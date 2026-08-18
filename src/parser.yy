@@ -55,7 +55,7 @@
 %token                        RPAREN
 %token                        EQUAL_TO
 %token                        NOT_EQUAL_TO
-%token                        GREATER_EQUA
+%token                        GREATER_EQUAL
 %token                        LESS_EQUAL
 %token                        GREATER_THAN
 %token                        LESS_THAN
@@ -65,6 +65,7 @@
 
 %left                         PLUS MINUS
 %left                         MULTIPLY DIVIDE
+%left                         EQUAL_TO NOT_EQUAL_TO GREATER_EQUAL LESS_EQUAL GREATER_THAN LESS_THAN
 %precedence                   UMINUS
 
 %%
@@ -78,33 +79,7 @@ input:
   // | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   // | NUM_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   // | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  // | dexpr EQUAL_TO expr       { result = parse_result_t{$1 == $3}; }
-  // | dexpr NOT_EQUAL_TO expr   { result = parse_result_t{$1 != $3}; }
-  // | dexpr GREATER_EQUA expr   { result = parse_result_t{$1 >= $3}; }
-  // | dexpr LESS_EQUAL expr     { result = parse_result_t{$1 <= $3}; }
-  // | dexpr GREATER_THAN expr   { result = parse_result_t{$1 > $3}; }
-  // | dexpr LESS_THAN expr      { result = parse_result_t{$1 < $3}; }
-  // | expr EQUAL_TO dexpr       { result = parse_result_t{$1 == $3}; }
-  // | expr NOT_EQUAL_TO dexpr   { result = parse_result_t{$1 != $3}; }
-  // | expr GREATER_EQUA dexpr   { result = parse_result_t{$1 >= $3}; }
-  // | expr LESS_EQUAL dexpr     { result = parse_result_t{$1 <= $3}; }
-  // | expr GREATER_THAN dexpr   { result = parse_result_t{$1 > $3}; }
-  // | expr LESS_THAN dexpr      { result = parse_result_t{$1 < $3}; }
   ;
-
-// expr:
-//   DOUBLE_T                    { $$ = $1; }
-// | NUM_VARIABLE                { $$ = var_map.get_num_variable($1); }
-// | PLUS expr %prec UMINUS      { $$ = +$2; }
-// | MINUS expr %prec UMINUS     { $$ = -$2; }
-// | expr PLUS     expr          { $$ = $1 + $3; }
-// | expr MINUS    expr          { $$ = $1 - $3; }
-// | expr MULTIPLY expr          { $$ = $1 * $3; }
-// | expr DIVIDE   expr          { $$ = $1 / $3; }
-// | LPAREN expr RPAREN          { $$ = $2; }
-// | FUNC_ONE_ARG LPAREN expr RPAREN { $$ = builtin::call_one_arg_func($1,$3); }
-// | FUNC_TWO_ARG LPAREN expr COMMA expr RPAREN { $$ = builtin::call_two_arg_func($1,$3, $5); }
-
 
 dexpr:
   DICE_T                      { $$ = $1; }
@@ -115,12 +90,12 @@ dexpr:
 | dexpr MINUS    dexpr        { $$ = $1 - $3; }
 | dexpr MULTIPLY dexpr        { $$ = $1 * $3; }
 | dexpr DIVIDE   dexpr        { $$ = $1 / $3; }
-// | dexpr EQUAL_TO dexpr        { $$ = $1 == $3; } // These rules are causing shift/reduce conflicts  
-// | dexpr NOT_EQUAL_TO dexpr    { $$ = $1 != $3; } // These rules are causing shift/reduce conflicts 
-// | dexpr GREATER_EQUA dexpr    { $$ = $1 >= $3; } // These rules are causing shift/reduce conflicts 
-// | dexpr LESS_EQUAL dexpr      { $$ = $1 <= $3; } // These rules are causing shift/reduce conflicts 
-// | dexpr GREATER_THAN dexpr    { $$ = $1 > $3; }  // These rules are causing shift/reduce conflicts
-// | dexpr LESS_THAN dexpr       { $$ = $1 < $3; }  // These rules are causing shift/reduce conflicts
+| dexpr EQUAL_TO dexpr        { $$ = $1 == $3; }
+| dexpr NOT_EQUAL_TO dexpr    { $$ = $1 != $3; }
+| dexpr GREATER_EQUAL dexpr    { $$ = $1 >= $3; }
+| dexpr LESS_EQUAL dexpr      { $$ = $1 <= $3; }
+| dexpr GREATER_THAN dexpr    { $$ = $1 > $3; }
+| dexpr LESS_THAN dexpr       { $$ = $1 < $3; }
 | LPAREN dexpr RPAREN         { $$ = $2; }
 | FUNC_ONE_ARG LPAREN dexpr RPAREN { $$ = builtin::call_one_arg_func($1,$3); }
 | FUNC_TWO_ARG LPAREN dexpr COMMA dexpr RPAREN { $$ = builtin::call_two_arg_func($1,$3, $5); }
