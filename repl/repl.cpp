@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
             if(std::holds_alternative<double>(result))
                 std::cout << ">> " << std::get<double>(result) <<std::endl;
             else if(std::holds_alternative<DiceDistr>(result))
-                std::cout << ">> " << std::get<DiceDistr>(result).get_expr() <<std::endl;
+                std::cout << ">> " << std::get<DiceDistr>(result) <<std::endl;
             else if(std::holds_alternative<action_code>(result))
                 std::cout << ">> " << std::get<action_code>(result) <<std::endl;
             else
