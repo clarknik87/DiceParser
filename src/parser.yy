@@ -115,6 +115,12 @@ dexpr:
 | dexpr MINUS    dexpr        { $$ = $1 - $3; }
 | dexpr MULTIPLY dexpr        { $$ = $1 * $3; }
 | dexpr DIVIDE   dexpr        { $$ = $1 / $3; }
+| dexpr EQUAL_TO dexpr        { $$ = $1 == $3; }
+| dexpr NOT_EQUAL_TO dexpr    { $$ = $1 != $3; }
+| dexpr GREATER_EQUA dexpr    { $$ = $1 >= $3; }
+| dexpr LESS_EQUAL dexpr      { $$ = $1 <= $3; }
+| dexpr GREATER_THAN dexpr    { $$ = $1 > $3; }
+| dexpr LESS_THAN dexpr       { $$ = $1 < $3; }
 | LPAREN dexpr RPAREN         { $$ = $2; }
 
 %%

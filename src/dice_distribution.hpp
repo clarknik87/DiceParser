@@ -20,12 +20,12 @@ public:
     double get_scalar() const;
 
     // Comparison Operator Overloads
-    double operator>(const DiceDistr& rhs) const;
-    double operator<(const DiceDistr& rhs) const;
-    double operator>=(const DiceDistr& rhs) const;
-    double operator<=(const DiceDistr& rhs) const;
-    double operator==(const DiceDistr& rhs) const;
-    double operator!=(const DiceDistr& rhs) const;
+    DiceDistr operator>(const DiceDistr& rhs) const;
+    DiceDistr operator<(const DiceDistr& rhs) const;
+    DiceDistr operator>=(const DiceDistr& rhs) const;
+    DiceDistr operator<=(const DiceDistr& rhs) const;
+    DiceDistr operator==(const DiceDistr& rhs) const;
+    DiceDistr operator!=(const DiceDistr& rhs) const;
     double operator>(double scalar) const;
     double operator<(double scalar) const;
     double operator>=(double scalar) const;

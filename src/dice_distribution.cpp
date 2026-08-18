@@ -93,12 +93,12 @@ bool DiceDistr::is_scalar() const { return m_pmf.is_scalar(); }
 double DiceDistr::get_scalar() const { return m_pmf.get_scalar(); }
 
 // Comparison Operator Overloads
-double DiceDistr::operator>(const DiceDistr& rhs) const { return (m_pmf>rhs.m_pmf); }
-double DiceDistr::operator<(const DiceDistr& rhs) const { return (m_pmf<rhs.m_pmf); }
-double DiceDistr::operator>=(const DiceDistr& rhs) const { return (m_pmf>=rhs.m_pmf); }
-double DiceDistr::operator<=(const DiceDistr& rhs) const { return (m_pmf<=rhs.m_pmf); }
-double DiceDistr::operator==(const DiceDistr& rhs) const { return (m_pmf==rhs.m_pmf); }
-double DiceDistr::operator!=(const DiceDistr& rhs) const { return (m_pmf!=rhs.m_pmf); }
+DiceDistr DiceDistr::operator>(const DiceDistr& rhs) const  { return DiceDistr("(" + (this->m_expr) + ">" + (rhs.m_expr) + ")",  DicePMF::scalar_distr(m_pmf>rhs.m_pmf)); }
+DiceDistr DiceDistr::operator<(const DiceDistr& rhs) const  { return DiceDistr("(" + (this->m_expr) + "<" + (rhs.m_expr) + ")",  DicePMF::scalar_distr(m_pmf<rhs.m_pmf)); }
+DiceDistr DiceDistr::operator>=(const DiceDistr& rhs) const { return DiceDistr("(" + (this->m_expr) + ">=" + (rhs.m_expr) + ")", DicePMF::scalar_distr(m_pmf>=rhs.m_pmf)); }
+DiceDistr DiceDistr::operator<=(const DiceDistr& rhs) const { return DiceDistr("(" + (this->m_expr) + "<=" + (rhs.m_expr) + ")", DicePMF::scalar_distr(m_pmf<=rhs.m_pmf)); }
+DiceDistr DiceDistr::operator==(const DiceDistr& rhs) const { return DiceDistr("(" + (this->m_expr) + "==" + (rhs.m_expr) + ")", DicePMF::scalar_distr(m_pmf==rhs.m_pmf)); }
+DiceDistr DiceDistr::operator!=(const DiceDistr& rhs) const { return DiceDistr("(" + (this->m_expr) + "!=" + (rhs.m_expr) + ")", DicePMF::scalar_distr(m_pmf!=rhs.m_pmf)); }
 double DiceDistr::operator>(double scalar) const { return (m_pmf>scalar); }
 double DiceDistr::operator<(double scalar) const { return (m_pmf<scalar); }
 double DiceDistr::operator>=(double scalar) const { return (m_pmf>=scalar); }
