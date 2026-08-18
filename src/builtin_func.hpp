@@ -2,6 +2,7 @@
 #define BUILTIN_FUNC_HPP
 
 #include <string>
+#include "dice_distribution.hpp"
 
 namespace builtin
 {
@@ -9,8 +10,8 @@ namespace builtin
 bool search_one_arg_func(const std::string& funcname);
 bool search_two_arg_func(const std::string& funcname);
 
-double call_one_arg_func(const std::string& funcname, double arg1);
-double call_two_arg_func(const std::string& funcname, double arg1, double arg2);
+DiceDistr call_one_arg_func(const std::string& funcname, const DiceDistr& arg1);
+DiceDistr call_two_arg_func(const std::string& funcname, const DiceDistr& arg1, const DiceDistr& arg2);
 
 }
 

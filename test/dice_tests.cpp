@@ -205,36 +205,94 @@ TEST(valid, dice_rolls)
     }
 }
 
-TEST(valid, dice_comparisons)
+// TEST(valid, dice_comparisons)
+// {
+//     std::vector<test_case_t> test_cases{
+//         // Basic Dice Formulas
+//         {"1d4 == 1", 0.25},
+//         {"1d4 != 1", 0.75},
+//         {"1d4 >= 1", 1.00},
+//         {"1d4 <= 1", 0.25},
+//         {"1d4 > 1", 0.75},
+//         {"1d4 < 1", 0.00},
+//         {"1 == 1d4", 0.25},
+//         {"1 != 1d4", 0.75},
+//         {"1 >= 1d4", 0.25},
+//         {"1 <= 1d4", 1.00},
+//         {"1 > 1d4", 0.00},
+//         {"1 < 1d4", 0.75},
+//         // Both sides
+//         {"1d1 == 1d4", 0.25},
+//         {"1d1 != 1d4", 0.75},
+//         {"1d1 >= 1d4", 0.25},
+//         {"1d1 <= 1d4", 1.00},
+//         {"1d1 > 1d4", 0.00},
+//         {"1d1 < 1d4", 0.75},
+//         // Used arithmetically (wierd but works)
+//         {"(1 == 1d4)+1.0", 1.25},
+//         {"(1 != 1d4)+1.0", 1.75},
+//         {"(1 >= 1d4)+1.0", 1.25},
+//         {"(1 <= 1d4)+1.0", 2.00},
+//         {"(1 > 1d4)+1.0", 1.00},
+//         {"(1 < 1d4)+1.0", 1.75},
+//     };
+
+//     DiceParser parser;
+//     for(auto test_case : test_cases)
+//     {
+//         auto parse_ans = parser.parse(test_case.test_str);
+//         if(std::holds_alternative<double>(parse_ans))
+//             EXPECT_EQ(std::get<double>(parse_ans), test_case.ans) << test_case.test_str;
+//         else
+//             FAIL() << test_case.test_str;
+//     }
+// }
+
+TEST(builtin, basics)
 {
     std::vector<test_case_t> test_cases{
-        // Basic Dice Formulas
-        {"1d4 == 1", 0.25},
-        {"1d4 != 1", 0.75},
-        {"1d4 >= 1", 1.00},
-        {"1d4 <= 1", 0.25},
-        {"1d4 > 1", 0.75},
-        {"1d4 < 1", 0.00},
-        {"1 == 1d4", 0.25},
-        {"1 != 1d4", 0.75},
-        {"1 >= 1d4", 0.25},
-        {"1 <= 1d4", 1.00},
-        {"1 > 1d4", 0.00},
-        {"1 < 1d4", 0.75},
-        // Both sides
-        {"1d1 == 1d4", 0.25},
-        {"1d1 != 1d4", 0.75},
-        {"1d1 >= 1d4", 0.25},
-        {"1d1 <= 1d4", 1.00},
-        {"1d1 > 1d4", 0.00},
-        {"1d1 < 1d4", 0.75},
-        // Used arithmetically (wierd but works)
-        {"(1 == 1d4)+1.0", 1.25},
-        {"(1 != 1d4)+1.0", 1.75},
-        {"(1 >= 1d4)+1.0", 1.25},
-        {"(1 <= 1d4)+1.0", 2.00},
-        {"(1 > 1d4)+1.0", 1.00},
-        {"(1 < 1d4)+1.0", 1.75},
+        // scalar operations
+        {"abs(-5)", 5.0},
+        {"abs(5)", 5.0},
+        {"abs(-5.4)", 5.4},
+        {"abs(4.2)", 4.2},
+        {"sqrt(4)", sqrt(4)},
+        {"sqrt(54.7)", sqrt(54.7)},
+        {"sqrt(100)", sqrt(100)},
+        {"sqrt(0.005678)", sqrt(0.005678)},
+        {"ceil(1.0)", 1},
+        {"ceil(1.1)", 2},
+        {"ceil(-1.1)", -1},
+        {"floor(1.0)", 1},
+        {"floor(1.1)", 1},
+        {"floor(1.9)", 1},
+        {"floor(-1.9)", -2},
+        {"trunc(1.0)", 1},
+        {"trunc(-1.1)", -1},
+        {"trunc(-1.9)", -1},
+        {"trunc(1.9)", 1},
+        {"trunc(1.1)", 1},
+        {"round(1.0)", 1},
+        {"round(1.1)", 1},
+        {"round(1.9)", 2},
+        {"round(-1.0)", -1},
+        {"round(-1.1)", -1},
+        {"round(-1.9)", -2},
+        {"pow(10,1)", 10},
+        {"pow(10,2)", 100},
+        {"pow(10,3)", 1000},
+        // DiceDistr operations
+        {"abs(1d10)", 5.5},
+        {"abs(1d10-2)", 3.7},
+        {"abs(-1d10)", 5.5},
+        {"sqrt(1d4)", 1.537},
+        {"sqrt(1d9)", 2.145},
+        {"sqrt(1d16)", 2.780},
+        {"ceil(1d4+0.5)", 3.5},
+        {"floor(1d4+0.5)", 2.5},
+        {"trunc(1d4+0.5)", 2.5},
+        {"round(1d4+0.5)", 3.5},
+        {"pow(1d4,2)", 7.5},
     };
 
     DiceParser parser;
@@ -242,50 +300,13 @@ TEST(valid, dice_comparisons)
     {
         auto parse_ans = parser.parse(test_case.test_str);
         if(std::holds_alternative<double>(parse_ans))
-            EXPECT_EQ(std::get<double>(parse_ans), test_case.ans) << test_case.test_str;
+            EXPECT_NEAR(std::get<double>(parse_ans), test_case.ans, float_epsilon) << test_case.test_str;
+        else if(std::holds_alternative<DiceDistr>(parse_ans))
+            EXPECT_NEAR(std::get<DiceDistr>(parse_ans).expected_value(), test_case.ans, float_epsilon) << test_case.test_str;
         else
             FAIL() << test_case.test_str;
     }
 }
-
-// TEST(builtin, basics)
-// {
-//     std::vector<test_case_t> test_cases{
-//         {"abs(-5)", 5.0},
-//         {"abs(5)", 5.0},
-//         {"abs(-5.4)", 5.4},
-//         {"abs(4.2)", 4.2},
-//         {"sqrt(4)", sqrt(4)},
-//         {"sqrt(54.7)", sqrt(54.7)},
-//         {"sqrt(100)", sqrt(100)},
-//         {"sqrt(0.005678)", sqrt(0.005678)},
-//         {"ceil(1.0)", 1},
-//         {"ceil(1.1)", 2},
-//         {"ceil(-1.1)", -1},
-//         {"floor(1.0)", 1},
-//         {"floor(1.1)", 1},
-//         {"floor(1.9)", 1},
-//         {"floor(-1.9)", -2},
-//         {"trunc(1.0)", 1},
-//         {"trunc(-1.1)", -1},
-//         {"trunc(-1.9)", -1},
-//         {"trunc(1.9)", 1},
-//         {"trunc(1.1)", 1},
-//         {"round(1.0)", 1},
-//         {"round(1.1)", 1},
-//         {"round(1.9)", 2},
-//         {"round(-1.0)", -1},
-//         {"round(-1.1)", -1},
-//         {"round(-1.9)", -2},
-//         {"pow(10,1)", 10},
-//         {"pow(10,2)", 100},
-//         {"pow(10,3)", 1000},
-//     };
-
-//     DiceParser parser;
-//     for(auto test_case : test_cases)
-//         EXPECT_EQ(std::get<double>(parser.parse(test_case.test_str)), test_case.ans);
-// }
 
 // TEST(variable_map, builtin_funcs)
 // {

@@ -115,13 +115,15 @@ dexpr:
 | dexpr MINUS    dexpr        { $$ = $1 - $3; }
 | dexpr MULTIPLY dexpr        { $$ = $1 * $3; }
 | dexpr DIVIDE   dexpr        { $$ = $1 / $3; }
-| dexpr EQUAL_TO dexpr        { $$ = $1 == $3; }
-| dexpr NOT_EQUAL_TO dexpr    { $$ = $1 != $3; }
-| dexpr GREATER_EQUA dexpr    { $$ = $1 >= $3; }
-| dexpr LESS_EQUAL dexpr      { $$ = $1 <= $3; }
-| dexpr GREATER_THAN dexpr    { $$ = $1 > $3; }
-| dexpr LESS_THAN dexpr       { $$ = $1 < $3; }
+// | dexpr EQUAL_TO dexpr        { $$ = $1 == $3; } // These rules are causing shift/reduce conflicts  
+// | dexpr NOT_EQUAL_TO dexpr    { $$ = $1 != $3; } // These rules are causing shift/reduce conflicts 
+// | dexpr GREATER_EQUA dexpr    { $$ = $1 >= $3; } // These rules are causing shift/reduce conflicts 
+// | dexpr LESS_EQUAL dexpr      { $$ = $1 <= $3; } // These rules are causing shift/reduce conflicts 
+// | dexpr GREATER_THAN dexpr    { $$ = $1 > $3; }  // These rules are causing shift/reduce conflicts
+// | dexpr LESS_THAN dexpr       { $$ = $1 < $3; }  // These rules are causing shift/reduce conflicts
 | LPAREN dexpr RPAREN         { $$ = $2; }
+| FUNC_ONE_ARG LPAREN dexpr RPAREN { $$ = builtin::call_one_arg_func($1,$3); }
+| FUNC_TWO_ARG LPAREN dexpr COMMA dexpr RPAREN { $$ = builtin::call_two_arg_func($1,$3, $5); }
 
 %%
 
