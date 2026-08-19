@@ -150,13 +150,19 @@ double DiceDistr::maximum() const { return m_pmf.maximum(); }
 double DiceDistr::expected_value() const { return m_pmf.expected_value(); }
 double DiceDistr::variance() const { return m_pmf.variance(); }
 double DiceDistr::standard_dev() const { return m_pmf.standard_dev(); }
+DiceDistr DiceDistr::minimum_as_distr() const { return DiceDistr("minimum(" + this->m_expr + ")", DicePMF::scalar_distr(this->m_pmf.minimum())); }
+DiceDistr DiceDistr::maximum_as_distr() const { return DiceDistr("maximum(" + this->m_expr + ")", DicePMF::scalar_distr(this->m_pmf.maximum())); }
+DiceDistr DiceDistr::expected_value_as_distr() const { return DiceDistr("expected(" + this->m_expr + ")", DicePMF::scalar_distr(this->m_pmf.expected_value())); }
+DiceDistr DiceDistr::variance_as_distr() const { return DiceDistr("variance(" + this->m_expr + ")", DicePMF::scalar_distr(this->m_pmf.variance())); }
+DiceDistr DiceDistr::standard_dev_as_distr() const { return DiceDistr("std_dev(" + this->m_expr + ")", DicePMF::scalar_distr(this->m_pmf.standard_dev())); }
 
 // Member Access
 const std::map<double,double>& DiceDistr::get_pmf() const { return m_pmf.get_pmf(); }   
 std::string DiceDistr::get_expr() const { return m_expr; }
 
 // Random selection
-double DiceDistr::roll() { return m_pmf.roll(); }
+double DiceDistr::roll() const { return m_pmf.roll(); }
+DiceDistr DiceDistr::roll_as_distr() const { return DiceDistr("roll(" + this->m_expr + ")", DicePMF::scalar_distr(roll())); }
 
 // Debug/Utility functions
 std::ostream& operator<< (std::ostream& stream, const DiceDistr& distr)

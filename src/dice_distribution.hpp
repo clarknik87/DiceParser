@@ -77,13 +77,19 @@ public:
     double expected_value() const;
     double variance() const;
     double standard_dev() const;
+    DiceDistr minimum_as_distr() const;
+    DiceDistr maximum_as_distr() const;
+    DiceDistr expected_value_as_distr() const;
+    DiceDistr variance_as_distr() const;
+    DiceDistr standard_dev_as_distr() const;
 
     // Member Access
     const std::map<double,double>& get_pmf() const;   
     std::string get_expr() const;
 
     // Random selection
-    double roll();
+    double roll() const;
+    DiceDistr roll_as_distr() const;
 
     // Debug/Utility functions
     friend std::ostream& operator<< (std::ostream& stream, const DiceDistr& distr);
