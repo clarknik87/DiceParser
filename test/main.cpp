@@ -12,26 +12,6 @@ TEST(valid, version)
     EXPECT_GE(DiceParser::version_patch, 0);
 }
 
-// TEST(valid, assignment)
-// {
-//     DiceParser parser;
-//     EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 10")), action_code::action_success);
-//     EXPECT_EQ(std::get<double>(parser.parse("myvar")), 10.0);
-//     EXPECT_EQ(std::get<double>(parser.parse("myvar-5.0")), 5.0);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 20/5")), action_code::action_success);
-//     EXPECT_EQ(std::get<double>(parser.parse("myvar")), 4.0);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 3d1")), action_code::action_success);
-//     EXPECT_EQ(std::get<DiceDistr>(parser.parse("myvar")).roll(), 3.0);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("myvar = 12.0")), action_code::action_success);
-//     EXPECT_EQ(std::get<double>(parser.parse("myvar")), 12.0);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("newvar = myvar+2.0")), action_code::action_success);
-//     EXPECT_EQ(std::get<double>(parser.parse("newvar")), 14.0);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("myvar2 = 4d1")), action_code::action_success);
-//     EXPECT_EQ(std::get<DiceDistr>(parser.parse("myvar2")).roll(), 4.0);
-//     EXPECT_EQ(std::get<action_code>(parser.parse("newvar2 = myvar2+2.0")), action_code::action_success);
-//     EXPECT_EQ(std::get<DiceDistr>(parser.parse("newvar2")).roll(), 6.0);
-// }
-
 // TEST(var_map, ctor)
 // {
 //     std::vector<std::pair<const std::string, const std::string>> constants{

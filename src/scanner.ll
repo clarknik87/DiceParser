@@ -61,8 +61,6 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
                         return calc::Parser::make_FUNC_ONE_ARG(token);
                     if(builtin::search_two_arg_func(token))
                         return calc::Parser::make_FUNC_TWO_ARG(token);
-                    if(var_map.check_num_variable(token))
-                        return calc::Parser::make_NUM_VARIABLE(token);
                     if(var_map.check_dice_variable(token))
                         return calc::Parser::make_DICE_VARIABLE(token);
                     return calc::Parser::make_NEW_VARIABLE(token);

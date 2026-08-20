@@ -21,33 +21,18 @@ VariableMap::VariableMap(
 VariableMap::VariableMap(
         calc::Scanner &p_scanner,
         DiceParser &p_parser,
-        expr_list& constants,
+        // expr_list& constants,
         expr_list& variables
     ) : scanner(p_scanner), parser(p_parser)
 {
     std::map<std::string, std::vector<std::string>> parse_list;
-    for(auto c : constants)
-        parse_list[c.first] = lex_dependencies(c.second);
     for(auto v : variables)
         parse_list[v.first] = lex_dependencies(v.second);
 
     auto parse_order = topological_sort(parse_list);
     for(auto key : parse_order)
     {
-        auto it = std::find_if(constants.begin(), constants.end(), [&key](expr_pair& i){ return i.first == key; });
-        if(it != constants.cend())
-        {
-            auto val = parser.parse(it->second);
-            if(std::holds_alternative<double>(val))
-                add_constant(it->first, std::get<double>(val), it->second);
-            else if(std::holds_alternative<DiceDistr>(val))
-                add_constant(it->first, std::get<DiceDistr>(val), it->second);
-            else
-                throw std::runtime_error(it->second + " does not parse to either double or DiceDistr");
-            continue;
-        }
-
-        it = std::find_if(variables.begin(), variables.end(), [&key](expr_pair& i){ return i.first == key; });
+        auto it = std::find_if(variables.begin(), variables.end(), [&key](expr_pair& i){ return i.first == key; });
         if(it != variables.cend())
         {
             auto val = parser.parse(it->second);
@@ -135,8 +120,7 @@ std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr) 
     auto sym = scanner.lex();
     while(sym.kind() != calc::Parser::symbol_kind::S_YYEOF)
     {
-        if(sym.kind() == calc::Parser::symbol_kind::S_DICE_VARIABLE 
-        || sym.kind() == calc::Parser::symbol_kind::S_NUM_VARIABLE
+        if(sym.kind() == calc::Parser::symbol_kind::S_DICE_VARIABLE
         || sym.kind() == calc::Parser::symbol_kind::S_NEW_VARIABLE)
         {
             dependencies.emplace_back(scanner.YYText());
@@ -147,13 +131,11 @@ std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr) 
     return dependencies;
 }
 
-void VariableMap::add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr, bool is_const)
+void VariableMap::add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr)
 {
     std::vector<std::string> dependencies;
     if(check_key(key))
     {
-        if(!is_const && var_list[key].is_const)
-            throw action_code::const_assignment_err;
         dependencies = std::move(var_list[key].dependencies);
     }
     
@@ -161,7 +143,6 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
     var_list[key] = UserVar(
         val,
         expr,
-        is_const,
         dependencies
     );
     for(auto d : lex_dependencies(expr))
@@ -206,14 +187,9 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
     }
 }
 
-void VariableMap::add_constant(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr)
-{
-    add_node(key, val, expr, true);
-}
-
 void VariableMap::add_variable(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr)
 {
-    add_node(key, val, expr, false);
+    add_node(key, val, expr);
 }
 
 double VariableMap::get_num_variable(const std::string& key) const
@@ -245,24 +221,12 @@ bool VariableMap::check_dice_variable(const std::string& key) const
     return check_key(key) && (std::holds_alternative<DiceDistr>(var_list.at(key).value));
 }
 
-std::map<std::string, std::string> VariableMap::get_const_map() const
-{
-    std::map<std::string, std::string> const_map;
-    for(auto it : var_list)
-    {
-        if(it.second.is_const)
-            const_map[it.first] = it.second.expr;
-    }
-    return const_map;
-}
-
 std::map<std::string, std::string> VariableMap::get_var_map() const
 {
     std::map<std::string, std::string> var_map;
     for(auto it : var_list)
     {
-        if(!it.second.is_const)
-            var_map[it.first] = it.second.expr;
+        var_map[it.first] = it.second.expr;
     }
     return var_map;
 }

@@ -11,6 +11,7 @@ add_executable(unit_tests
     dice_pmf_tests.cpp
     dice_tests.cpp
     main.cpp
+    variable_tests.cpp
 )
 
 target_include_directories(unit_tests PUBLIC

@@ -40,7 +40,6 @@
 
 %token <DiceDistr>            DICE_T
 %token <std::string>          DICE_VARIABLE
-%token <std::string>          NUM_VARIABLE
 %token <std::string>          NEW_VARIABLE
 %token <std::string>          FUNC_ONE_ARG
 %token <std::string>          FUNC_TWO_ARG
@@ -71,14 +70,9 @@
 %%
 
 input:
-  //  expr                        { result = parse_result_t{$1}; }
-  dexpr                       { if($1.is_scalar()) result = parse_result_t{$1.get_scalar()}; else result = parse_result_t{$1};}
-  // | NEW_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  // | NUM_VARIABLE ASSIGN expr  { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  // | DICE_VARIABLE ASSIGN expr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  // | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  // | NUM_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
-  // | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+    dexpr                     { if($1.is_scalar()) result = parse_result_t{$1.get_scalar()}; else result = parse_result_t{$1};}
+  | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   ;
 
 dexpr:
