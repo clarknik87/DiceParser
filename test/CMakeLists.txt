@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(googletest)
 add_executable(unit_tests
     dice_pmf_tests.cpp
     dice_tests.cpp
+    interpolate_tests.cpp
     main.cpp
     variable_tests.cpp
 )
