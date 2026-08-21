@@ -77,7 +77,7 @@ input:
 
 dexpr:
   DICE_T                      { $$ = $1; }
-| DICE_VARIABLE               { $$ = var_map.get_dice_variable($1); }
+| DICE_VARIABLE               { $$ = var_map.at($1); }
 | PLUS dexpr %prec UMINUS     { $$ = +$2; }
 | MINUS dexpr %prec UMINUS    { $$ = -$2; }
 | dexpr PLUS     dexpr        { $$ = $1 + $3; }

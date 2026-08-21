@@ -73,26 +73,26 @@ TEST(variable_map, interface_tests)
     DiceDistr dice_val("5d1");
 
     // check that the num_list and dice_lists are empty
-    ASSERT_FALSE(var_map.check_dice_variable(dice_key));
-    ASSERT_FALSE(var_map.check_dice_variable(num_key));
+    ASSERT_FALSE(var_map.contains(dice_key));
+    ASSERT_FALSE(var_map.contains(num_key));
 
     // check add actions
     var_map.add_variable(num_key, num_val, std::to_string(num_val));
-    ASSERT_TRUE(var_map.check_dice_variable(num_key));
-    EXPECT_EQ(var_map.get_dice_variable(num_key).get_scalar(), num_val);
+    ASSERT_TRUE(var_map.contains(num_key));
+    EXPECT_EQ(var_map.at(num_key).get_scalar(), num_val);
 
     var_map.add_variable(dice_key, dice_val, dice_val.get_expr());
-    ASSERT_TRUE(var_map.check_dice_variable(dice_key));
-    EXPECT_EQ(var_map.get_dice_variable(dice_key).get_scalar(), dice_val.get_scalar());
+    ASSERT_TRUE(var_map.contains(dice_key));
+    EXPECT_EQ(var_map.at(dice_key).get_scalar(), dice_val.get_scalar());
 
     // check reassignment
     var_map.add_variable(num_key, num_val+1, std::to_string(num_val+1));
-    ASSERT_TRUE(var_map.check_dice_variable(num_key));
-    EXPECT_EQ(var_map.get_dice_variable(num_key).get_scalar(), num_val+1);
+    ASSERT_TRUE(var_map.contains(num_key));
+    EXPECT_EQ(var_map.at(num_key).get_scalar(), num_val+1);
 
     var_map.add_variable(dice_key, num_val-1, std::to_string(num_val-1));
-    ASSERT_TRUE(var_map.check_dice_variable(dice_key));
-    EXPECT_EQ(var_map.get_dice_variable(dice_key).get_scalar(), num_val-1);
+    ASSERT_TRUE(var_map.contains(dice_key));
+    EXPECT_EQ(var_map.at(dice_key).get_scalar(), num_val-1);
 }
 
 TEST(variable_map, ctor_tests)
@@ -104,10 +104,10 @@ TEST(variable_map, ctor_tests)
         {"dice2", "4d1"}
     });
     auto& var_map = parser.get_variable_map();
-    EXPECT_EQ(var_map.get_dice_variable("var1"), 1.0);
-    EXPECT_EQ(var_map.get_dice_variable("var2"), 2.0);
-    EXPECT_EQ(var_map.get_dice_variable("dice1").roll(), DiceDistr("3d1").roll());
-    EXPECT_EQ(var_map.get_dice_variable("dice2").roll(), DiceDistr("4d1").roll());
+    EXPECT_EQ(var_map.at("var1"), 1.0);
+    EXPECT_EQ(var_map.at("var2"), 2.0);
+    EXPECT_EQ(var_map.at("dice1").roll(), DiceDistr("3d1").roll());
+    EXPECT_EQ(var_map.at("dice2").roll(), DiceDistr("4d1").roll());
 }
 
 TEST(variable_map, update_dependencies)

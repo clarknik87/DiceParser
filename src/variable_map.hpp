@@ -52,8 +52,8 @@ public:
         expr_list& variables
     );
 
-    DiceDistr   get_dice_variable(const std::string& key) const;
-    bool        check_dice_variable(const std::string& key) const;
+    DiceDistr   at(const std::string& key) const;
+    bool        contains(const std::string& key) const;
 
     void add_variable(const std::string& key, DiceDistr val, const std::string& expr);
 

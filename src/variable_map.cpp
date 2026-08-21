@@ -132,7 +132,7 @@ std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr) 
 void VariableMap::add_node(const std::string& key, DiceDistr val, const std::string& expr)
 {
     std::vector<std::string> dependencies;
-    if(check_dice_variable(key))
+    if(contains(key))
     {
         dependencies = std::move(var_list[key].dependencies);
     }
@@ -145,7 +145,7 @@ void VariableMap::add_node(const std::string& key, DiceDistr val, const std::str
     );
     for(auto d : lex_dependencies(expr))
     {
-        if(check_dice_variable(d))
+        if(contains(d))
             var_list[d].dependencies.emplace_back(key);
         else
             throw action_code::variable_undefined;
@@ -161,7 +161,7 @@ void VariableMap::add_node(const std::string& key, DiceDistr val, const std::str
     {
         for(auto d : var_list[update_stack.front()].dependencies)
         {
-            if(check_dice_variable(d))
+            if(contains(d))
             {
                 // the parser is not reentrant, it wipes the scanner state with
                 // each call. For this method to work, we need to instantiate a new
@@ -190,14 +190,14 @@ void VariableMap::add_variable(const std::string& key, DiceDistr val, const std:
     add_node(key, val, expr);
 }
 
-DiceDistr VariableMap::get_dice_variable(const std::string& key) const
+DiceDistr VariableMap::at(const std::string& key) const
 {
-    if(!check_dice_variable(key))
+    if(!contains(key))
         throw action_code::variable_undefined;
     return var_list.at(key).value;
 }
 
-bool VariableMap::check_dice_variable(const std::string& key) const
+bool VariableMap::contains(const std::string& key) const
 {
     return (var_list.find(key) != var_list.end());
 }
