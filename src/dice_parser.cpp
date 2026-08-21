@@ -6,7 +6,7 @@ constexpr char ETOKEN[] = "}";
 
 DiceParser::DiceParser() : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(scanner, *this) {}
 DiceParser::DiceParser(const VariableMap& map) : scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(map) {}
-DiceParser::DiceParser(expr_list constants, expr_list variables) :
+DiceParser::DiceParser(expr_list variables) :
     scanner(std::cin, std::cerr, var_map), parser(&scanner, result, var_map), var_map(scanner, *this, variables) {}
 
 parse_result_t DiceParser::parse(const std::string& dice_str)

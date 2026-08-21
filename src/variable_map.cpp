@@ -21,7 +21,6 @@ VariableMap::VariableMap(
 VariableMap::VariableMap(
         calc::Scanner &p_scanner,
         DiceParser &p_parser,
-        // expr_list& constants,
         expr_list& variables
     ) : scanner(p_scanner), parser(p_parser)
 {
@@ -33,19 +32,18 @@ VariableMap::VariableMap(
     for(auto key : parse_order)
     {
         auto it = std::find_if(variables.begin(), variables.end(), [&key](expr_pair& i){ return i.first == key; });
-        if(it != variables.cend())
+        if(it == variables.cend())
+            throw std::runtime_error(key + " not found in either constants nor variables");
+        else
         {
             auto val = parser.parse(it->second);
             if(std::holds_alternative<double>(val))
-                add_variable(it->first, std::get<double>(val), it->second);
+                add_variable(it->first, DiceDistr(std::get<double>(val)), it->second);
             else if(std::holds_alternative<DiceDistr>(val))
                 add_variable(it->first, std::get<DiceDistr>(val), it->second);
             else
                 throw std::runtime_error(it->second + " does not parse to either double or DiceDistr");
-            continue;
         }
-        //else key not found
-        throw std::runtime_error(key + " not found in either constants nor variables");        
     }
 }
 
@@ -131,10 +129,10 @@ std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr) 
     return dependencies;
 }
 
-void VariableMap::add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr)
+void VariableMap::add_node(const std::string& key, DiceDistr val, const std::string& expr)
 {
     std::vector<std::string> dependencies;
-    if(check_key(key))
+    if(check_dice_variable(key))
     {
         dependencies = std::move(var_list[key].dependencies);
     }
@@ -147,7 +145,7 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
     );
     for(auto d : lex_dependencies(expr))
     {
-        if(check_key(d))
+        if(check_dice_variable(d))
             var_list[d].dependencies.emplace_back(key);
         else
             throw action_code::variable_undefined;
@@ -163,7 +161,7 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
     {
         for(auto d : var_list[update_stack.front()].dependencies)
         {
-            if(check_key(d))
+            if(check_dice_variable(d))
             {
                 // the parser is not reentrant, it wipes the scanner state with
                 // each call. For this method to work, we need to instantiate a new
@@ -172,7 +170,7 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
                 DiceParser temp_parser(*this);
                 auto val = temp_parser.parse(var_list[d].expr);
                 if(std::holds_alternative<double>(val))
-                    var_list[d].value = std::get<double>(val);
+                    var_list[d].value = DiceDistr(std::get<double>(val));
                 else if(std::holds_alternative<DiceDistr>(val))
                     var_list[d].value = std::get<DiceDistr>(val);
                 else
@@ -187,38 +185,21 @@ void VariableMap::add_node(const std::string& key, std::variant<double, DiceDist
     }
 }
 
-void VariableMap::add_variable(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr)
+void VariableMap::add_variable(const std::string& key, DiceDistr val, const std::string& expr)
 {
     add_node(key, val, expr);
-}
-
-double VariableMap::get_num_variable(const std::string& key) const
-{
-    if(!check_num_variable(key))
-        throw action_code::variable_undefined;
-    return std::get<double>(var_list.at(key).value);
 }
 
 DiceDistr VariableMap::get_dice_variable(const std::string& key) const
 {
     if(!check_dice_variable(key))
         throw action_code::variable_undefined;
-    return std::get<DiceDistr>(var_list.at(key).value);
-}
-
-bool VariableMap::check_key(const std::string& key) const
-{
-     return (var_list.find(key) != var_list.end());
-}
-
-bool VariableMap::check_num_variable(const std::string& key) const
-{
-    return check_key(key) && (std::holds_alternative<double>(var_list.at(key).value));
+    return var_list.at(key).value;
 }
 
 bool VariableMap::check_dice_variable(const std::string& key) const
 {
-    return check_key(key) && (std::holds_alternative<DiceDistr>(var_list.at(key).value));
+    return (var_list.find(key) != var_list.end());
 }
 
 std::map<std::string, std::string> VariableMap::get_var_map() const

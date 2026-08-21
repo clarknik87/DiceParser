@@ -26,7 +26,7 @@ public:
     // Parser Construction
     DiceParser();
     DiceParser(const VariableMap& map);
-    DiceParser(expr_list constants, expr_list variables);
+    DiceParser(expr_list variables);
 
     // Parsing Interface
     parse_result_t parse(const std::string& dice_str);

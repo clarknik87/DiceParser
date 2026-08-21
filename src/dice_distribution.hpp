@@ -12,6 +12,7 @@ private:
 public:
     // Constructors
     DiceDistr() = default;
+    DiceDistr(double scalar);
     DiceDistr(std::string expr);
     DiceDistr(std::string expr, DicePMF pmf);
 

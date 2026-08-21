@@ -87,6 +87,7 @@ DiceDistr::DiceDistr(std::string expr) : m_expr(expr)
 };
 
 DiceDistr::DiceDistr(std::string expr, DicePMF pmf) : m_expr(expr), m_pmf(pmf) {}
+DiceDistr::DiceDistr(double scalar) : m_expr(std::to_string(scalar)), m_pmf(DicePMF::scalar_distr(scalar)) {}
 
 // Type conversion
 bool DiceDistr::is_scalar() const { return m_pmf.is_scalar(); }

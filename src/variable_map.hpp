@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <variant>
 #include "dice_distribution.hpp"
 
 // scanner and parser forward declarations
@@ -16,9 +15,9 @@ class DiceParser;
 
 struct UserVar
 {
-    std::variant<double, DiceDistr> value{0.0};
-    std::string                     expr;
-    std::vector<std::string>        dependencies;
+    DiceDistr                   value;
+    std::string                 expr;
+    std::vector<std::string>    dependencies;
 };
 
 using expr_pair = std::pair<const std::string, const std::string>;
@@ -31,8 +30,7 @@ private:
     calc::Scanner &scanner;
     DiceParser &parser;
 
-    void add_node(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr);
-    bool check_key(const std::string& key) const;
+    void add_node(const std::string& key, DiceDistr val, const std::string& expr);
     std::vector<std::string> lex_dependencies(const std::string& expr) const;
     std::vector<std::string> topological_sort(std::map<std::string, std::vector<std::string>> list) const;
     bool check_cycles() const;
@@ -54,13 +52,10 @@ public:
         expr_list& variables
     );
 
-    
-    double      get_num_variable(const std::string& key) const;
     DiceDistr   get_dice_variable(const std::string& key) const;
-    bool        check_num_variable(const std::string& key) const;
     bool        check_dice_variable(const std::string& key) const;
 
-    void add_variable(const std::string& key, std::variant<double, DiceDistr> val, const std::string& expr);
+    void add_variable(const std::string& key, DiceDistr val, const std::string& expr);
 
     std::map<std::string, std::string> get_var_map() const;
 };
