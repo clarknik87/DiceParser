@@ -49,10 +49,10 @@ TEST(variable_map, add_node)
     DiceParser parser;
     
     // check that none of the symbols are defined in the parser
-    EXPECT_EQ(std::get<action_code>(parser.parse("var1")), action_code::invalid_syntax);
-    EXPECT_EQ(std::get<action_code>(parser.parse("const1")), action_code::invalid_syntax);
-    EXPECT_EQ(std::get<action_code>(parser.parse("cdice1")), action_code::invalid_syntax);
-    EXPECT_EQ(std::get<action_code>(parser.parse("dice1")), action_code::invalid_syntax);
+    EXPECT_EQ(std::get<action_code>(parser.parse("var1")), action_code::variable_undefined);
+    EXPECT_EQ(std::get<action_code>(parser.parse("const1")), action_code::variable_undefined);
+    EXPECT_EQ(std::get<action_code>(parser.parse("cdice1")), action_code::variable_undefined);
+    EXPECT_EQ(std::get<action_code>(parser.parse("dice1")), action_code::variable_undefined);
     
     auto& var_map = parser.get_variable_map();
     var_map.add_variable("var1", DiceDistr("1.0"), "1.0");
