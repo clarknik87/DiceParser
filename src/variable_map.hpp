@@ -56,6 +56,7 @@ public:
     bool        contains(const std::string& key) const;
 
     void add_variable(const std::string& key, DiceDistr val, const std::string& expr);
+    void delete_variable(const std::string& key);
 
     std::map<std::string, std::string> get_var_map() const;
 };

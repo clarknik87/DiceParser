@@ -140,3 +140,13 @@ TEST(variable_map, update_dependencies)
         EXPECT_EQ(std::get<double>(parser.parse("D")), 11.0);
     }
 }
+
+TEST(varaible_map, delete_tests)
+{
+   DiceParser parser;
+   ASSERT_EQ(std::get<action_code>(parser.parse("A = 1")), action_code::action_success);
+   ASSERT_EQ(std::get<action_code>(parser.parse("B = A+2")), action_code::action_success);
+   ASSERT_EQ(std::get<action_code>(parser.parse("delete(A)")), action_code::delete_dependency_err);
+   ASSERT_EQ(std::get<action_code>(parser.parse("delete(B)")), action_code::action_success);
+   ASSERT_EQ(std::get<action_code>(parser.parse("delete(A)")), action_code::action_success);
+}

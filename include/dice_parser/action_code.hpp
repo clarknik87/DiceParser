@@ -10,6 +10,7 @@ enum class action_code
     invalid_formula,
     invalid_syntax,
     variable_undefined,
+    delete_dependency_err,
     cyclic_graph_err,
 };
 
@@ -28,6 +29,9 @@ inline std::ostream& operator<<(std::ostream& os, action_code& code)
         break;
     case action_code::variable_undefined:
         os << "action_code::variable_undefined";
+        break;
+    case action_code::delete_dependency_err:
+        os << "action_code::delete_dependency_err";
         break;
     case action_code::cyclic_graph_err:
         os << "action_code::cyclic_graph_err";

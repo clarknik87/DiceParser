@@ -28,6 +28,7 @@ dice_max_s  "max("([0-9]+)"d"([0-9]+)")"
 dice_min_s  "min("([0-9]+)"d"([0-9]+)")"
 dice_max_c  "max("([0-9]+)","([0-9]+)"d"([0-9]+)")"
 dice_min_c  "min("([0-9]+)","([0-9]+)"d"([0-9]+)")"
+op_delete   "delete"
 variable    [a-zA-Z_][a-zA-Z0-9_]*
 
 %%
@@ -54,6 +55,7 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
 "<"               return calc::Parser::make_LESS_THAN();
 "="               return calc::Parser::make_ASSIGN();
 ","               return calc::Parser::make_COMMA();
+{op_delete}       return calc::Parser::make_OP_DELETE();
 [ \t\r\n]+        { /* skip whitespace */ }
 {variable}        {
                     std::string token{YYText()};
@@ -61,7 +63,7 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
                         return calc::Parser::make_FUNC_ONE_ARG(token);
                     if(builtin::search_two_arg_func(token))
                         return calc::Parser::make_FUNC_TWO_ARG(token);
-                    if(var_map.check_dice_variable(token))
+                    if(var_map.contains(token))
                         return calc::Parser::make_DICE_VARIABLE(token);
                     return calc::Parser::make_NEW_VARIABLE(token);
                   }

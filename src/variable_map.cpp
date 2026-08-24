@@ -190,6 +190,17 @@ void VariableMap::add_variable(const std::string& key, DiceDistr val, const std:
     add_node(key, val, expr);
 }
 
+void VariableMap::delete_variable(const std::string& key)
+{
+    if(!contains(key))
+        throw action_code::variable_undefined;
+    if(var_list.at(key).dependencies.size() > 0)
+        throw action_code::delete_dependency_err;
+    for(auto& [_, value] : var_list)
+        std::erase(value.dependencies, key);
+    var_list.erase(key);
+}
+
 DiceDistr VariableMap::at(const std::string& key) const
 {
     if(!contains(key))

@@ -60,6 +60,7 @@
 %token                        LESS_THAN
 %token                        ASSIGN
 %token                        COMMA
+%token                        OP_DELETE
 
 
 %left                         PLUS MINUS
@@ -73,6 +74,7 @@ input:
     dexpr                     { if($1.is_scalar()) result = parse_result_t{$1.get_scalar()}; else result = parse_result_t{$1};}
   | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
+  | OP_DELETE LPAREN DICE_VARIABLE RPAREN { var_map.delete_variable($3); result = parse_result_t{action_code::action_success}; }
   ;
 
 dexpr:
