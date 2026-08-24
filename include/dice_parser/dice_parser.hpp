@@ -17,6 +17,8 @@ private:
 
     parse_result_t result;
     VariableMap var_map;
+
+    std::string preprocess(const std::string& p_str, bool* var_undefined=nullptr);
 public:
     // Version
     static constexpr int version_major{VersionInfo::MAJOR};

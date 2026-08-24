@@ -11,21 +11,31 @@ DiceParser::DiceParser(expr_list variables) :
 
 parse_result_t DiceParser::parse(const std::string& dice_str)
 {
-    scanner.set_input(dice_str);
-    try
+    bool preprocess_err = false;
+    scanner.set_input(preprocess(dice_str, &preprocess_err));
+    if(!preprocess_err)
     {
-        parser.parse();
+        try
+        {
+            parser.parse();
+        }
+        catch(action_code e)
+        {
+            result = parse_result_t{e};
+        }
     }
-    catch(action_code e)
+    else
     {
-        result = parse_result_t{e};
+        result = parse_result_t{action_code::variable_undefined};
     }
     return result;
 }
 
-std::string DiceParser::interpolate(const std::string& intrp_str)
+std::string DiceParser::preprocess(const std::string& p_str, bool* var_undefined)
 {
-    std::string str{intrp_str};
+    std::string str{p_str};
+    if(var_undefined)
+        *var_undefined = false;
     while((str.find(STOKEN) != str.npos) && (str.find(ETOKEN) != str.npos))
     {
         int sidx = str.find(STOKEN);
@@ -40,9 +50,25 @@ std::string DiceParser::interpolate(const std::string& intrp_str)
             else
                 parsed_str = std::to_string(parsed_val);
         }
+        else if(std::holds_alternative<DiceDistr>(result))
+        {
+            DiceDistr parsed_val = std::get<DiceDistr>(result);
+            parsed_str = parsed_val.get_expr();
+        }
+        else if(std::holds_alternative<action_code>(result))
+        {
+            action_code parsed_val = std::get<action_code>(result);
+            if(parsed_val == action_code::variable_undefined && var_undefined)
+                *var_undefined = true;
+        }
         str.replace(sidx, eidx-sidx+1, parsed_str);
     }
     return str;
+}
+
+std::string DiceParser::interpolate(const std::string& intrp_str)
+{
+    return preprocess(intrp_str);
 }
 
 VariableMap& DiceParser::get_variable_map()

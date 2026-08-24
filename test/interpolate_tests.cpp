@@ -56,3 +56,35 @@ TEST(interpolate, invalid)
         EXPECT_EQ(parser.interpolate(test_case.test), test_case.ans);
     }
 }
+
+TEST(preprocess, valid)
+{
+    DiceParser parser({
+        {"dex", "3"},
+        {"bardic", "1d4"},
+    });
+
+    // Assert that variables are loaded correctly
+    ASSERT_EQ(std::get<double>(parser.parse("dex")), 3.0);
+    ASSERT_EQ(std::get<DiceDistr>(parser.parse("bardic")).expected_value(), 2.5);
+
+    // Verify that using {} allows use of dereferenced values
+    EXPECT_EQ(std::get<action_code>(parser.parse("A = dex")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B = {dex}")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("dex = 4")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 4.0);
+    EXPECT_EQ(std::get<double>(parser.parse("B")), 3.0);
+
+    EXPECT_EQ(std::get<action_code>(parser.parse("A = bardic")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B = {bardic}")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("bardic = 1d6")), action_code::action_success);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("A")).maximum(), 6.0);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("B")).maximum(), 4.0);
+}
+
+TEST(preprocess, invalid)
+{
+    DiceParser parser;
+    EXPECT_EQ(std::get<action_code>(parser.parse("{dex}")), action_code::variable_undefined);
+    EXPECT_EQ(std::get<action_code>(parser.parse("{bardic}")), action_code::variable_undefined);
+}
