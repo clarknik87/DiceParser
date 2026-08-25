@@ -28,6 +28,22 @@ TEST(parser, error_codes)
     }
 }
 
+TEST(parser, empty_statements)
+{
+    DiceParser parser;
+    EXPECT_EQ(std::get<action_code>(parser.parse("")), action_code::empty_command);
+    EXPECT_EQ(std::get<action_code>(parser.parse(";")), action_code::empty_command);
+    EXPECT_EQ(std::get<action_code>(parser.parse(";;;")), action_code::empty_command);
+}
+
+TEST(parser, multiple_statements)
+{
+    DiceParser parser;
+    EXPECT_EQ(std::get<double>(parser.parse("1+1;2")), 2);
+    EXPECT_EQ(std::get<double>(parser.parse("1+1;2;")), 2);
+    EXPECT_EQ(std::get<double>(parser.parse("A=2; A+1; A")), 2);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

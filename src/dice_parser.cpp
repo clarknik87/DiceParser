@@ -1,6 +1,7 @@
 #include <cmath>
 #include "dice_parser/dice_parser.hpp"
 
+constexpr char EOL[] = ";";
 constexpr char STOKEN[] = "{";
 constexpr char ETOKEN[] = "}"; 
 
@@ -11,22 +12,44 @@ DiceParser::DiceParser(expr_list variables) :
 
 parse_result_t DiceParser::parse(const std::string& dice_str)
 {
-    bool preprocess_err = false;
-    scanner.set_input(preprocess(dice_str, &preprocess_err));
-    if(!preprocess_err)
-    {
-        try
-        {
-            parser.parse();
+    auto split = [](std::string s){
+        std::vector<std::string> tokens;
+        size_t pos = 0;
+        std::string token;
+        while ((pos = s.find(EOL)) != std::string::npos) {
+            token = s.substr(0, pos);
+            if(!token.empty())
+                tokens.push_back(token);
+            s.erase(0, pos + (sizeof(EOL)-1));
         }
-        catch(action_code e)
-        {
-            result = parse_result_t{e};
-        }
-    }
-    else
+        if(!s.empty())
+            tokens.push_back(s);
+
+        return tokens;
+    };
+
+    result = parse_result_t{action_code::empty_command};
+    for(auto statement : split(dice_str))
     {
-        result = parse_result_t{action_code::variable_undefined};
+        bool preprocess_err = false;
+        scanner.set_input(preprocess(statement, &preprocess_err));
+        if(!preprocess_err)
+        {
+            try
+            {
+                parser.parse();
+            }
+            catch(action_code e)
+            {
+                result = parse_result_t{e};
+                break;
+            }
+        }
+        else
+        {
+            result = parse_result_t{action_code::variable_undefined};
+            break;
+        }
     }
     return result;
 }

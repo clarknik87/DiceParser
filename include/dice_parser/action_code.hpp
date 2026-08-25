@@ -6,6 +6,7 @@
 enum class action_code
 {
     action_success,
+    empty_command,
     unknown_symbol,
     invalid_formula,
     invalid_syntax,
@@ -20,6 +21,9 @@ inline std::ostream& operator<<(std::ostream& os, action_code& code)
     {
     case action_code::action_success:
         os << "action_code::action_success";
+        break;
+    case action_code::empty_command:
+        os << "action_code::empty_command";
         break;
     case action_code::unknown_symbol:
         os << "action_code::unknown_symbol";
