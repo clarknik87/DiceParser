@@ -33,7 +33,7 @@ using parse_result_t = std::variant<double, DiceDistr, action_code>;
 
 `double` is returned as the result of basic mathematical operations.
 
-`DiceDistr` is returned if the expression evaluates to a dice probability distribution which generally occurs whenever a dice formula occurs anywhere in the expression. DiceDistr is a class that contains the full probability density function of the formula entered. For example, "1d6" will return a DiceDistr representing a uniform distribution between 1 and 6. DiceDistr implements functions like `minimum()`, `maximum()`, `expected_value()`, `variance()`, and `standard_dev()` that can be used to analyze the associated pdf. The associated pdf is stored internally using a 2D Eigen matrix. The second row stores the roll value, the first row stores the asscoiated probability. A standard d4 (four sided die) would look like this:
+`DiceDistr` is returned if the expression evaluates to a dice probability distribution which generally occurs whenever a dice formula occurs anywhere in the expression. DiceDistr is a class that contains the full probability density function of the formula entered. For example, "1d6" will return a DiceDistr representing a uniform distribution between 1 and 6. DiceDistr implements functions like `minimum()`, `maximum()`, `expected_value()`, `variance()`, and `standard_dev()` that can be used to analyze the associated pmf. The associated pmf is stored internally using a basic std::map<double,double>. The second row (the keys) stores the roll value, the first row (the values) stores the asscoiated probability. A standard d4 (four sided die) would look like this:
 ```
 [[0.25 0.25 0.25 0.25],
 [1    2    3    4]]
@@ -53,7 +53,4 @@ The parser also supports comparison operations with dice formulas. Comparison op
 Finally the parser supports assignment syntax, using a single `=`,  to allow the user to define variables at runtime. For example `parse("my_var = 1d20")` allows the user to later call `parse("my_var")` to roll a twenty sided die.
 
 ## Dependencies
-The parser requires the user to have the `Bison` and `Flex` utilities installed. The library also depends on the `Eigen` library for the underlying matrix operations.
-
-## Future Development
-- add in more built-in functions
+The parser requires the user to have the `Bison` and `Flex` utilities installed.
