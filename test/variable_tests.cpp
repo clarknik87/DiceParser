@@ -27,7 +27,7 @@ TEST(valid, assignment)
     EXPECT_EQ(std::get<double>(parser.parse("newvar2")), 6.0);
 }
 
-TEST(var_map, ctor)
+TEST(variable_map, ctor)
 {
     DiceParser parser({
         {"C", "A + B"},
@@ -141,7 +141,7 @@ TEST(variable_map, update_dependencies)
     }
 }
 
-TEST(varaible_map, delete_tests)
+TEST(variable_map, delete_tests)
 {
    DiceParser parser;
    ASSERT_EQ(std::get<action_code>(parser.parse("A = 1")), action_code::action_success);
@@ -149,4 +149,29 @@ TEST(varaible_map, delete_tests)
    ASSERT_EQ(std::get<action_code>(parser.parse("delete(A)")), action_code::delete_dependency_err);
    ASSERT_EQ(std::get<action_code>(parser.parse("delete(B)")), action_code::action_success);
    ASSERT_EQ(std::get<action_code>(parser.parse("delete(A)")), action_code::action_success);
+}
+
+TEST(variable_map, cyclic_err)
+{
+    DiceParser parser;
+    // self reassignment
+    EXPECT_EQ(std::get<action_code>(parser.parse("A=1")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A=A+2")), action_code::cyclic_graph_err);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 1.0);
+
+    // two node cycle
+    EXPECT_EQ(std::get<action_code>(parser.parse("A=1")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B=A+1")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A=B")), action_code::cyclic_graph_err);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 1.0);
+    EXPECT_EQ(std::get<double>(parser.parse("B")), 2.0);
+
+    // three node cycle
+    EXPECT_EQ(std::get<action_code>(parser.parse("A=1")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B=A+1")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("C=B+1")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A=C")), action_code::cyclic_graph_err);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 1.0);
+    EXPECT_EQ(std::get<double>(parser.parse("B")), 2.0);
+    EXPECT_EQ(std::get<double>(parser.parse("C")), 3.0);
 }

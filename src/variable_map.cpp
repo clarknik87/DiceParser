@@ -104,7 +104,7 @@ bool VariableMap::check_cycles() const
             list.insert({i.first, i.second.dependencies});
         topological_sort(list);
     }
-    catch(const std::exception& e)
+    catch(...)
     {
         return false;
     }
@@ -131,6 +131,8 @@ std::vector<std::string> VariableMap::lex_dependencies(const std::string& expr) 
 
 void VariableMap::add_node(const std::string& key, DiceDistr val, const std::string& expr)
 {
+    auto backup_list = var_list;
+
     std::vector<std::string> dependencies;
     if(contains(key))
     {
@@ -148,10 +150,16 @@ void VariableMap::add_node(const std::string& key, DiceDistr val, const std::str
         if(contains(d))
             var_list[d].dependencies.emplace_back(key);
         else
+        {
+            var_list = std::move(backup_list);
             throw action_code::variable_undefined;
+        }
     }
     if(!check_cycles())
-        throw action_code::cyclic_graph_err; 
+    {
+        var_list = std::move(backup_list);
+        throw action_code::cyclic_graph_err;
+    }
     
     // update other nodes
     std::queue<std::string> update_stack;
