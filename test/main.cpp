@@ -44,6 +44,30 @@ TEST(parser, multiple_statements)
     EXPECT_EQ(std::get<double>(parser.parse("A=2; A+1; A")), 2);
 }
 
+TEST(parser, compound_operators)
+{
+    DiceParser parser;
+    EXPECT_EQ(std::get<action_code>(parser.parse("A = 10")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A += 10")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 20);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A -= 10")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 10);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A *= 10")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 100);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A /= 10")), action_code::action_success);
+    EXPECT_EQ(std::get<double>(parser.parse("A")), 10);
+
+    EXPECT_EQ(std::get<action_code>(parser.parse("B = 1d4")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B += 1")), action_code::action_success);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("B")).expected_value(), 3.5);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B -= 1")), action_code::action_success);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("B")).expected_value(), 2.5);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B *= 1")), action_code::action_success);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("B")).expected_value(), 2.5);
+    EXPECT_EQ(std::get<action_code>(parser.parse("B /= 1")), action_code::action_success);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("B")).expected_value(), 2.5);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

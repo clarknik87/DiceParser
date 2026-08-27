@@ -56,6 +56,10 @@ variable    [a-zA-Z_][a-zA-Z0-9_]*
 "="               return calc::Parser::make_ASSIGN();
 ","               return calc::Parser::make_COMMA();
 {op_delete}       return calc::Parser::make_OP_DELETE();
+"+="              return calc::Parser::make_COMPOUND_PLUS();
+"-="              return calc::Parser::make_COMPOUND_MINUS();
+"*="              return calc::Parser::make_COMPOUND_MULTIPLY();
+"/="              return calc::Parser::make_COMPOUND_DIVIDE();
 [ \t\r\n]+        { /* skip whitespace */ }
 {variable}        {
                     std::string token{YYText()};

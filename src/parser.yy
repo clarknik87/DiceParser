@@ -61,6 +61,10 @@
 %token                        ASSIGN
 %token                        COMMA
 %token                        OP_DELETE
+%token                        COMPOUND_PLUS
+%token                        COMPOUND_MINUS
+%token                        COMPOUND_MULTIPLY
+%token                        COMPOUND_DIVIDE
 
 
 %left                         PLUS MINUS
@@ -76,6 +80,11 @@ input:
   | NEW_VARIABLE ASSIGN dexpr { var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   | DICE_VARIABLE ASSIGN dexpr{ var_map.add_variable($1, $3, scanner->get_assigned_expr()); result = parse_result_t{action_code::action_success}; }
   | OP_DELETE LPAREN DICE_VARIABLE RPAREN { var_map.delete_variable($3); result = parse_result_t{action_code::action_success}; }
+
+  | DICE_VARIABLE COMPOUND_PLUS dexpr { var_map.add_variable($1, var_map.at($1)+$3, ""); result = parse_result_t{action_code::action_success}; }
+  | DICE_VARIABLE COMPOUND_MINUS dexpr { var_map.add_variable($1, var_map.at($1)-$3, ""); result = parse_result_t{action_code::action_success}; }
+  | DICE_VARIABLE COMPOUND_MULTIPLY dexpr { var_map.add_variable($1, var_map.at($1)*$3, ""); result = parse_result_t{action_code::action_success}; }
+  | DICE_VARIABLE COMPOUND_DIVIDE dexpr { var_map.add_variable($1, var_map.at($1)/$3, ""); result = parse_result_t{action_code::action_success}; }
   ;
 
 dexpr:
