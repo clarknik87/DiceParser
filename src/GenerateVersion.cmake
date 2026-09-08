@@ -11,44 +11,44 @@
 #       -DPROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}  // or whatever the major version should be
 #       -DPROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}  // or whatever the minor version should be
 
-function(get_commit_count)
-    find_package(Git QUIET)
-    if(NOT Git_FOUND)
-        message(WARNING "Git not found")
-        return()
-    endif()
+# function(get_commit_count)
+#     find_package(Git QUIET)
+#     if(NOT Git_FOUND)
+#         message(WARNING "Git not found")
+#         return()
+#     endif()
 
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_TAG
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        RESULT_VARIABLE GIT_RESULT
-    )
+#     execute_process(
+#         COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
+#         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#         OUTPUT_VARIABLE GIT_TAG
+#         OUTPUT_STRIP_TRAILING_WHITESPACE
+#         RESULT_VARIABLE GIT_RESULT
+#     )
 
-    if(NOT GIT_RESULT EQUAL 0)
-        message(WARNING "Failed to get git tag")
-        return()
-    endif()
+#     if(NOT GIT_RESULT EQUAL 0)
+#         message(WARNING "Failed to get git tag")
+#         return()
+#     endif()
 
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} rev-list --count ${GIT_TAG}..HEAD
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_COMMIT_COUNT
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        RESULT_VARIABLE GIT_COUNT_RESULT
-    )
+#     execute_process(
+#         COMMAND ${GIT_EXECUTABLE} rev-list --count ${GIT_TAG}..HEAD
+#         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#         OUTPUT_VARIABLE GIT_COMMIT_COUNT
+#         OUTPUT_STRIP_TRAILING_WHITESPACE
+#         RESULT_VARIABLE GIT_COUNT_RESULT
+#     )
 
-    if(NOT GIT_RESULT EQUAL 0)
-        message(WARNING "Failed to count commits since ${GIT_TAG}")
-        return()
-    endif()
+#     if(NOT GIT_RESULT EQUAL 0)
+#         message(WARNING "Failed to count commits since ${GIT_TAG}")
+#         return()
+#     endif()
 
-    set(GIT_COMMIT_COUNT ${GIT_COMMIT_COUNT} PARENT_SCOPE)
-endfunction()
+#     set(GIT_COMMIT_COUNT ${GIT_COMMIT_COUNT} PARENT_SCOPE)
+# endfunction()
 
-get_commit_count()
-set(PROJECT_VERSION_PATCH ${GIT_COMMIT_COUNT})
+# get_commit_count()
+# set(PROJECT_VERSION_PATCH ${GIT_COMMIT_COUNT})
 
 configure_file(
     "${SRC_DIR}/version.hpp.in"
