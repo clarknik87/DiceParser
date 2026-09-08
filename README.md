@@ -29,11 +29,11 @@ DiceParser::parse has the following return type:
 ```
 using parse_result_t = std::variant<double, DiceDistr, action_code>;
 ```
-`action_code` is an enum defined in `parser_result.hpp`. This is returned if there is any error in the parsing process, ie unknown symbols, or invalid formual syntax, or if a successful action has no meaningful output, ie variable assignment.
+`action_code` is an enum defined in `parser_result.hpp`. This is returned if there is any error in the parsing process, ie unknown symbols, or invalid formula syntax, or if a successful action has no meaningful output, ie variable assignment.
 
 `double` is returned as the result of basic mathematical operations.
 
-`DiceDistr` is returned if the expression evaluates to a dice probability distribution which generally occurs whenever a dice formula occurs anywhere in the expression. DiceDistr is a class that contains the full probability density function of the formula entered. For example, "1d6" will return a DiceDistr representing a uniform distribution between 1 and 6. DiceDistr implements functions like `minimum()`, `maximum()`, `expected_value()`, `variance()`, and `standard_dev()` that can be used to analyze the associated pmf. The associated pmf is stored internally using a basic std::map<double,double>. The second row (the keys) stores the roll value, the first row (the values) stores the asscoiated probability. A standard d4 (four sided die) would look like this:
+`DiceDistr` is returned if the expression evaluates to a dice probability distribution which generally occurs whenever a dice formula occurs anywhere in the expression. DiceDistr is a class that contains the full probability density function of the formula entered. For example, "1d6" will return a DiceDistr representing a uniform distribution between 1 and 6. DiceDistr implements functions like `minimum()`, `maximum()`, `expected_value()`, `variance()`, and `standard_dev()` that can be used to analyze the associated pmf. The associated pmf is stored internally using a basic std::map<double,double>. The second row (the keys) stores the roll value, the first row (the values) stores the associated probability. A standard d4 (four sided die) would look like this:
 ```
 [[0.25 0.25 0.25 0.25],
 [1    2    3    4]]
@@ -47,10 +47,22 @@ The parser supports the following kind syntax structures (some based off popular
 - advantage and disadvantage: max(2d20), min(2d20), or simply: adv, dis
 - to take the single highest/lowest of many dice use: max(5d20) or min(6d4)
 - to take multiple of the highest/lowest of many dice use (eg roll character stats): max(3,4d6) or min(3,4d6)
+- builtin functions that can operate on scalars or DiceDistr include:
+  - math functions: `sqrt`, `pow`, `floor`, `ciel`, `trunc`, `abs`, `round`
+  - stats functions: `minimum`, `maximum`, `expected`, `variance`, `std_dev`
+  - `roll` can be used to simulate a roll on a dice formula, `parse("roll(1d4)")` will return a random value between 1 and 4.
 
 The parser also supports comparison operations with dice formulas. Comparison operations (>,<,>=, or <=, ==, !=) return the probability of rolling higher/lower/equal to a given number. For example `parse("1d4 > 1")` will return 0.75, meaning a 4 sided die has a 75% chance of rolling higher than a 1.
 
-Finally the parser supports assignment syntax, using a single `=`,  to allow the user to define variables at runtime. For example `parse("my_var = 1d20")` allows the user to later call `parse("my_var")` to roll a twenty sided die.
+Finally the parser supports assignment syntax, using a single `=`,  to allow the user to define variables at runtime. For example `parse("my_var = 1d20")` allows the user to later call `parse("roll(my_var)")` to roll a twenty sided die.
+
+Variables can be deleted using the `delete` function. `parse("delete(my_var)")`.
+
+Variables can reference other variables and automatically track dependencies. Changing an existing variables value automatically updates other variables as necessary. To reference the current value of a variable without creating a dependency link, use `{}` around the variable.
+- `B = A-1` means B will update whenever A changes
+- `B = {A}-1` means B will use A's current value and will not update if A changes
+
+Variables also support compound assignment operators like `+=`, `-=`, `*=`, and `/=`. These can make it simple to increment or decrement a variables value. For example, `A = 10` followed by `A -= 1` returns 9.
 
 ## Dependencies
 The parser requires the user to have the `Bison` and `Flex` utilities installed.
