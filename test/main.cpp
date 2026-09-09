@@ -8,8 +8,8 @@
 TEST(valid, version)
 {
     EXPECT_EQ(DiceParser::version_major, 2);
-    EXPECT_EQ(DiceParser::version_minor, 0);
-    EXPECT_GE(DiceParser::version_patch, 0);
+    EXPECT_EQ(DiceParser::version_minor, 1);
+    EXPECT_GE(DiceParser::version_patch, 2);
 }
 
 TEST(parser, error_codes)
@@ -66,6 +66,18 @@ TEST(parser, compound_operators)
     EXPECT_EQ(std::get<DiceDistr>(parser.parse("B")).expected_value(), 2.5);
     EXPECT_EQ(std::get<action_code>(parser.parse("B /= 1")), action_code::action_success);
     EXPECT_EQ(std::get<DiceDistr>(parser.parse("B")).expected_value(), 2.5);
+}
+
+TEST(parser, get_prev_result)
+{
+    DiceParser parser;
+    EXPECT_EQ(std::get<action_code>(parser.get_prev_result()), action_code::empty_command);
+    EXPECT_EQ(std::get<double>(parser.parse("1+1")), 2);
+    EXPECT_EQ(std::get<double>(parser.get_prev_result()), 2);
+    EXPECT_EQ(std::get<DiceDistr>(parser.parse("1d6")), 2);
+    EXPECT_EQ(std::get<DiceDistr>(parser.get_prev_result()).expected_value(), 3.5);
+    EXPECT_EQ(std::get<action_code>(parser.parse("A = 10")), action_code::action_success);
+    EXPECT_EQ(std::get<action_code>(parser.get_prev_result()), action_code::action_success);
 }
 
 int main(int argc, char** argv)

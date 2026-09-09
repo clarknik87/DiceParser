@@ -98,3 +98,8 @@ VariableMap& DiceParser::get_variable_map()
 {
     return var_map;
 }
+
+parse_result_t DiceParser::get_prev_result() const
+{
+    return result;
+}

@@ -15,7 +15,7 @@ private:
     calc::Scanner scanner;
     calc::Parser parser;
 
-    parse_result_t result;
+    parse_result_t result{action_code::empty_command};
     VariableMap var_map;
 
     std::string preprocess(const std::string& p_str, bool* var_undefined=nullptr);
@@ -36,6 +36,9 @@ public:
 
     // Variable Map Access
     VariableMap& get_variable_map();
+
+    // Other
+    parse_result_t get_prev_result() const;
 };
 
 #endif//DICE_PARSER_HPP_GUARD
